@@ -25,8 +25,8 @@ jobs:
         with:
           # manylinux for Linux wheels; universal2 for macOS; MSVC for Windows
           manylinux: auto
-          args: >-
-            build -o dist
+          command: build
+          args: -o dist
 
       - name: Build sdist
         if: matrix.os == 'ubuntu-latest'

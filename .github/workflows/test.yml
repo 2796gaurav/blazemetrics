@@ -28,8 +28,7 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           manylinux: auto
-          args: >-
-            build
+          command: build
 
       - name: Test installation
         run: |
