@@ -29,7 +29,7 @@ jobs:
         with:
           manylinux: auto
           args: >-
-            build -m pyproject.toml
+            build
 
       - name: Test installation
         run: |

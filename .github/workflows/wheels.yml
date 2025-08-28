@@ -26,14 +26,14 @@ jobs:
           # manylinux for Linux wheels; universal2 for macOS; MSVC for Windows
           manylinux: auto
           args: >-
-            build -m pyproject.toml -o dist
+            build -o dist
 
       - name: Build sdist
         if: matrix.os == 'ubuntu-latest'
         uses: PyO3/maturin-action@v1
         with:
           command: sdist
-          args: -m pyproject.toml -o dist
+          args: -o dist
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
