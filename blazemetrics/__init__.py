@@ -1,14 +1,23 @@
-from .blazemetrics import (
-    rouge_score,
-    bleu,
-    bert_score_similarity,
-    chrf_score,
-    token_f1,
-    jaccard,
-    moverscore_greedy_py as moverscore_greedy,
-    meteor,
-    wer,
-)
+# Import Rust functions directly from the compiled extension
+try:
+    from blazemetrics_core import (
+        rouge_score,
+        bleu,
+        bert_score_similarity,
+        chrf_score,
+        token_f1,
+        jaccard,
+        moverscore_greedy_py as moverscore_greedy,
+        meteor,
+        wer,
+    )
+except ImportError:
+    # Fallback for development or when extension not built
+    raise ImportError(
+        "blazemetrics_core extension not found. "
+        "Make sure the Rust extension is built with 'maturin build' or 'pip install -e .'"
+    )
+
 from .metrics import compute_text_metrics, aggregate_samples
 from .exporters import MetricsExporters
 from .monitor import monitor_stream_sync, monitor_stream_async
