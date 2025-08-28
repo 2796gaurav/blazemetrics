@@ -28,6 +28,7 @@ Most users can just install from PyPI and do not need Rust:
 pip install blazemetrics
 ```
 
+
 When a prebuilt wheel is available for your OS/Python version, `pip` will download a binary wheel and no compilation or Rust toolchain is required.
 
 ### Building from source (developers/contributors)
