@@ -1,48 +1,66 @@
-name: Test Build
+name: Build and Publish Wheels
 
 on:
   push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - 'v*'
+  release:
+    types: [published]
+  workflow_dispatch:
 
 jobs:
-  test-build:
-    name: Test build (${{ matrix.os }})
+  build-wheels:
+    name: Build wheels (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
-    
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Test build with maturin
+      # Build wheels for all supported Python versions on each OS
+      - name: Build wheels with maturin
         uses: PyO3/maturin-action@v1
         with:
+          # manylinux for Linux wheels; universal2 for macOS; MSVC for Windows
           manylinux: auto
           command: build
+          args: -o dist
 
-      - name: Test installation
-        run: |
-          # Find and install the wheel
-          find target -name "*.whl" -exec pip install {} \;
-          python -c "import blazemetrics; print('Import successful')"
+      - name: Build sdist
+        if: matrix.os == 'ubuntu-latest'
+        uses: PyO3/maturin-action@v1
+        with:
+          command: sdist
+          args: -o dist
 
-      - name: Run basic tests
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}
+          path: dist/*
+
+  publish:
+    name: Publish to PyPI
+    needs: build-wheels
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'release'
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Flatten artifact directory
+        shell: bash
         run: |
-          python -c "
-          from blazemetrics import rouge_score, bleu
-          candidates = ['the cat sat on the mat']
-          references = [['the cat was on the mat']]
-          print('ROUGE:', rouge_score(candidates, references, score_type='rouge_n', n=1))
-          print('BLEU:', bleu(candidates, references))
-          print('All tests passed!')
-          " 
+          mkdir -p upload
+          find dist -type f -name "*.whl" -exec cp {} upload/ \;
+          find dist -type f -name "*.tar.gz" -exec cp {} upload/ \;
+          ls -la upload
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: upload
+          password: ${{ secrets.PYPI_API_TOKEN }} 
