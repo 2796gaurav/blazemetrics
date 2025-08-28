@@ -1,5 +1,5 @@
 from typing import List, Dict, Any, Optional, Tuple
-from .blazemetrics import (
+from blazemetrics import (
     guard_blocklist as _guard_blocklist,
     guard_regex as _guard_regex,
     guard_pii_redact as _guard_pii_redact,

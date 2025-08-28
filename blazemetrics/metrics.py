@@ -1,5 +1,5 @@
 from typing import List, Dict, Optional
-from . import (
+from blazemetrics import (
     rouge_score,
     bleu,
     chrf_score,

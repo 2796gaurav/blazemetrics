@@ -32,7 +32,8 @@ jobs:
 
       - name: Test installation
         run: |
-          pip install target/wheels/*.whl
+          # Find and install the wheel
+          find target -name "*.whl" -exec pip install {} \;
           python -c "import blazemetrics; print('Import successful')"
 
       - name: Run basic tests
