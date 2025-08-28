@@ -26,7 +26,7 @@ jobs:
           # manylinux for Linux wheels; universal2 for macOS; MSVC for Windows
           manylinux: auto
           args: >-
-            build --release -m pyproject.toml -o dist
+            build -m pyproject.toml -o dist
 
       - name: Build sdist
         if: matrix.os == 'ubuntu-latest'
