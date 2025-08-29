@@ -2,7 +2,7 @@
 name = "blazemetrics"
 version = "0.1.2"
 authors = [
-  { name="Gaurav", email="2796gaur@gmail.com" },
+  { name="Gaurav", email="2796gaurav@gmail.com" },
 ]
 description = "A high-performance NLP evaluation metrics library with a Rust core."
 readme = "README.md"
