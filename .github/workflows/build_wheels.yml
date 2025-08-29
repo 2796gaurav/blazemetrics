@@ -52,14 +52,7 @@ jobs:
           # Verify import
           $VENV_PY -c "import blazemetrics; print('Import OK', blazemetrics.__version__)"
           # Run basic smoke tests
-          $VENV_PY - <<'PY'
-from blazemetrics import rouge_score, bleu
-candidates = ['the cat sat on the mat']
-references = [['the cat was on the mat']]
-print('ROUGE:', rouge_score(candidates, references, score_type='rouge_n', n=1))
-print('BLEU:', bleu(candidates, references))
-print('Smoke tests passed!')
-PY
+          $VENV_PY -c "from blazemetrics import rouge_score, bleu; candidates=['the cat sat on the mat']; references=[['the cat was on the mat']]; print('ROUGE:', rouge_score(candidates, references, score_type='rouge_n', n=1)); print('BLEU:', bleu(candidates, references)); print('Smoke tests passed!')"
 
       - name: Upload wheels artifact
         uses: actions/upload-artifact@v4
