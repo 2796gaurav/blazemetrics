@@ -4,6 +4,7 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/blazemetrics.svg)](https://pypi.org/project/blazemetrics/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Wheels](https://img.shields.io/badge/wheels-available-brightgreen.svg)](https://pypi.org/project/blazemetrics/#files)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1No3vlPCIuZuAJfpK09xbaDyuveJ2LKfs?usp=sharing)
 
 **BlazeMetrics** is a Python library designed to be the fastest implementation of standard NLP evaluation metrics, powered by a highly optimized Rust core. It leverages Rust's performance, memory safety, and true parallelism to offer significant speedups over pure Python implementations, especially on large datasets.
 
@@ -27,8 +28,7 @@ Most users can just install from PyPI and do not need Rust:
 pip install blazemetrics
 ```
 
-
-When a prebuilt wheel is available for your OS/Python version, `pip` will download a binary wheel and no compilation or Rust toolchain is required.
+Prebuilt wheels are published for Linux (manylinux2014), macOS, and Windows across Python 3.8–3.12 via CI. On supported platforms, `pip` will download a wheel and skip any Rust compilation. If you still see a build step, it likely means a wheel for your exact Python/OS/arch wasn’t available yet.
 
 ### Building from source only for (developers/contributors)
 
@@ -42,11 +42,9 @@ curl --proto '=https' --tlsv1.2 -sSf https://rustup.rs | sh
 pip install -e .
 ```
 
-> Note: We publish wheels for common platforms to avoid requiring Rust for end users. If you still see a build step, it likely means a wheel for your exact Python/OS/arch wasn’t available yet.
-
 ### Maintainers: building wheels
 
-To produce and upload wheels for multiple platforms and Python versions:
+We use GitHub Actions to build wheels for Linux, macOS, and Windows and publish them on tagged releases. To build locally or for custom targets:
 
 ```bash
 # Build wheels (example for Linux manylinux2014)
@@ -55,8 +53,6 @@ maturin build --release --compatibility manylinux2014 -o dist
 # Upload
 maturin upload dist/*
 ```
-
-Consider using CI to build wheels for Linux, macOS, and Windows across supported Python versions, so users never need Rust.
 
 ## ⚡ Quickstart
 
@@ -208,12 +204,12 @@ python examples/benchmark.py --parallel {0,1} --par-threshold 512
 
 Open the end-to-end showcase notebooks directly in Colab:
 
-- **01 — Installation and Setup**: https://colab.research.google.com/drive/1No3vlPCIuZuAJfpK09xbaDyuveJ2LKfs?usp=sharing
-- **02 — Core Metrics Showcase**: https://colab.research.google.com/drive/1gABpSf0rWjFSjJdMyYqXgbHOGhA4FyFI?usp=sharing
-- **03 — Guardrails Showcase**: https://colab.research.google.com/drive/19ZpqxQl7yvvxSd7FsnB603IbwOdx5NoT?usp=sharing
-- **04 — Streaming Monitoring**: https://colab.research.google.com/drive/17Mzd2p1oUfw0hjIHGw-E6jL5V3XITdhX?usp=sharing
-- **05 — Production Workflows**: https://colab.research.google.com/drive/1Vi86d3WPtG9p3V2RmxSHWt4wXxJ049Qe?usp=sharing
-- **06 — Performance Benchmarking**: https://colab.research.google.com/drive/18gDd3bRHE0v_MjJMeLnW3wMCALrcFKMa?usp=sharing
+- **01 — Installation and Setup**: [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1No3vlPCIuZuAJfpK09xbaDyuveJ2LKfs?usp=sharing)
+- **02 — Core Metrics Showcase**: [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1gABpSf0rWjFSjJdMyYqXgbHOGhA4FyFI?usp=sharing)
+- **03 — Guardrails Showcase**: [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/19ZpqxQl7yvvxSd7FsnB603IbwOdx5NoT?usp=sharing)
+- **04 — Streaming Monitoring**: [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/17Mzd2p1oUfw0hjIHGw-E6jL5V3XITdhX?usp=sharing)
+- **05 — Production Workflows**: [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Vi86d3WPtG9p3V2RmxSHWt4wXxJ049Qe?usp=sharing)
+- **06 — Performance Benchmarking**: [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18gDd3bRHE0v_MjJMeLnW3wMCALrcFKMa?usp=sharing)
 
 ## 🔧 How to Add a New Metric
 
