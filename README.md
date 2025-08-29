@@ -1,9 +1,8 @@
-# BlazeMetrics 🔥📏
+# BlazeMetrics 🔥
 
 [![PyPI version](https://badge.fury.io/py/blazemetrics.svg)](https://pypi.org/project/blazemetrics/)
 [![Python versions](https://img.shields.io/pypi/pyversions/blazemetrics.svg)](https://pypi.org/project/blazemetrics/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://github.com/2796gaurav/blazemetrics/workflows/Build%20and%20Publish%20Wheels/badge.svg)](https://github.com/2796gaurav/blazemetrics/actions)
 [![Wheels](https://img.shields.io/badge/wheels-available-brightgreen.svg)](https://pypi.org/project/blazemetrics/#files)
 
 **BlazeMetrics** is a Python library designed to be the fastest implementation of standard NLP evaluation metrics, powered by a highly optimized Rust core. It leverages Rust's performance, memory safety, and true parallelism to offer significant speedups over pure Python implementations, especially on large datasets.
@@ -31,7 +30,7 @@ pip install blazemetrics
 
 When a prebuilt wheel is available for your OS/Python version, `pip` will download a binary wheel and no compilation or Rust toolchain is required.
 
-### Building from source (developers/contributors)
+### Building from source only for (developers/contributors)
 
 If a wheel is not available for your platform, or if you install from source (e.g., `git clone` or `pip install -e .`), the Rust toolchain is required to build the native extension:
 

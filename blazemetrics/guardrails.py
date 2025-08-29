@@ -1,13 +1,39 @@
 from typing import List, Dict, Any, Optional, Tuple
-from blazemetrics import (
-    guard_blocklist as _guard_blocklist,
-    guard_regex as _guard_regex,
-    guard_pii_redact as _guard_pii_redact,
-    guard_safety_score as _guard_safety_score,
-    guard_json_validate as _guard_json_validate,
-    guard_detect_injection_spoof as _guard_detect_injection_spoof,
-    guard_max_cosine_similarity as _guard_max_cosine_similarity,
-)
+
+
+def _guard_blocklist(texts: List[str], patterns: List[str], case_insensitive: bool) -> List[bool]:
+    from . import blazemetrics as _ext
+    return _ext.guard_blocklist(texts, patterns, case_insensitive)
+
+
+def _guard_regex(texts: List[str], patterns: List[str], case_insensitive: bool) -> List[bool]:
+    from . import blazemetrics as _ext
+    return _ext.guard_regex(texts, patterns, case_insensitive)
+
+
+def _guard_pii_redact(texts: List[str]) -> List[str]:
+    from . import blazemetrics as _ext
+    return _ext.guard_pii_redact(texts)
+
+
+def _guard_safety_score(texts: List[str]) -> List[float]:
+    from . import blazemetrics as _ext
+    return _ext.guard_safety_score(texts)
+
+
+def _guard_json_validate(texts: List[str], schema_json: str) -> Tuple[List[bool], List[str]]:
+    from . import blazemetrics as _ext
+    return _ext.guard_json_validate(texts, schema_json)
+
+
+def _guard_detect_injection_spoof(texts: List[str]) -> List[bool]:
+    from . import blazemetrics as _ext
+    return _ext.guard_detect_injection_spoof(texts)
+
+
+def _guard_max_cosine_similarity(candidates: "npt.NDArray[np.float32]", exemplars: "npt.NDArray[np.float32]") -> List[float]:
+    from . import blazemetrics as _ext
+    return _ext.guard_max_cosine_similarity(candidates, exemplars)  # type: ignore
 
 
 class Guardrails:

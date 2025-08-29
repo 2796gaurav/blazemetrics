@@ -2,6 +2,11 @@
 name = "blazemetrics_core"
 version = "0.1.0"
 edition = "2021"
+description = "Rust core for blazemetrics: high-performance NLP metrics and guardrails"
+license = "MIT"
+repository = "https://github.com/2796gaur/blazemetrics"
+homepage = "https://github.com/2796gaur/blazemetrics"
+documentation = "https://github.com/2796gaur/blazemetrics#readme"
 
 [lib]
 name = "blazemetrics"

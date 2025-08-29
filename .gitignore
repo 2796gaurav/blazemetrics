@@ -16,6 +16,8 @@ build/
 .coverage
 htmlcov/
 
+.pypirc
+
 # Rust
 /target/
 # Keep Cargo.lock for binary crates (should be committed)

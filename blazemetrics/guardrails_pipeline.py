@@ -1,7 +1,8 @@
 from typing import Iterable, AsyncIterable, Dict, Any, List, Iterator, Optional, Callable
 import asyncio
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from functools import partial
+import sys
 
 from .guardrails import Guardrails
 
@@ -77,7 +78,11 @@ def map_large_texts(
         return []
     worker = partial(_check_chunk, cfg=cfg)
     results: List[Dict[str, Any]] = []
-    with ProcessPoolExecutor(max_workers=processes) as ex:
+
+    # On Windows, prefer threads to avoid spawn guard requirements for user scripts
+    ExecutorClass = ThreadPoolExecutor if sys.platform.startswith("win") else ProcessPoolExecutor
+
+    with ExecutorClass(max_workers=processes) as ex:
         for res in ex.map(worker, chunks):
             results.append(res)
     return results

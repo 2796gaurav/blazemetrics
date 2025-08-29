@@ -1,31 +1,55 @@
 # Import Rust functions directly from the compiled extension
 try:
-    from blazemetrics import (
+    # Use relative import to avoid shadowing the package name
+    from . import blazemetrics as _ext
+    (
         rouge_score,
         bleu,
         bert_score_similarity,
         chrf_score,
         token_f1,
         jaccard,
-        moverscore_greedy_py as moverscore_greedy,
-        meteor_score as meteor,
-        wer_score as wer,
+        moverscore_greedy_py,
+        meteor_score,
+        wer_score,
+    ) = (
+        _ext.rouge_score,
+        _ext.bleu,
+        _ext.bert_score_similarity,
+        _ext.chrf_score,
+        _ext.token_f1,
+        _ext.jaccard,
+        _ext.moverscore_greedy_py,
+        _ext.meteor,
+        _ext.wer,
     )
-except ImportError:
+    # Provide public names expected by users
+    moverscore_greedy = moverscore_greedy_py
+    meteor = meteor_score
+    wer = wer_score
+except ImportError as e:
     # Fallback for development or when extension not built
     raise ImportError(
         "blazemetrics extension not found. "
-        "Make sure the Rust extension is built with 'maturin build' or 'pip install -e .'"
-    )
+        "Build the Rust extension via 'maturin develop' or install with 'pip install -e .'"
+    ) from e
 
 from .metrics import compute_text_metrics, aggregate_samples
 from .exporters import MetricsExporters
 from .monitor import monitor_stream_sync, monitor_stream_async
-from .guardrails import Guardrails, guardrails_check
+from .guardrails import Guardrails, guardrails_check, max_similarity_to_unsafe
 from .guardrails_pipeline import monitor_tokens_sync, monitor_tokens_async, map_large_texts, enforce_stream_sync
 
 import os
 from typing import Optional
+
+# Expose package version for `blazemetrics.__version__`
+try:
+    from importlib.metadata import version as _pkg_version  # Python 3.8+
+    __version__ = _pkg_version("blazemetrics")
+except Exception:
+    # Fallback if package metadata is unavailable (e.g., editable installs without metadata)
+    __version__ = os.environ.get("BLAZEMETRICS_VERSION", "0.0.0")
 
 __all__ = [
     "rouge_score",
@@ -52,6 +76,7 @@ __all__ = [
     "get_parallel",
     "set_parallel_threshold",
     "get_parallel_threshold",
+    "max_similarity_to_unsafe",
 ]
 
 __doc__ = """
