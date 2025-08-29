@@ -204,6 +204,17 @@ Parallelism flags available in the benchmark:
 python examples/benchmark.py --parallel {0,1} --par-threshold 512
 ```
 
+## 📓 Showcase Notebooks (Open in Colab)
+
+Open the end-to-end showcase notebooks directly in Colab:
+
+- **01 — Installation and Setup**: https://colab.research.google.com/drive/1No3vlPCIuZuAJfpK09xbaDyuveJ2LKfs?usp=sharing
+- **02 — Core Metrics Showcase**: https://colab.research.google.com/drive/1gABpSf0rWjFSjJdMyYqXgbHOGhA4FyFI?usp=sharing
+- **03 — Guardrails Showcase**: https://colab.research.google.com/drive/19ZpqxQl7yvvxSd7FsnB603IbwOdx5NoT?usp=sharing
+- **04 — Streaming Monitoring**: https://colab.research.google.com/drive/17Mzd2p1oUfw0hjIHGw-E6jL5V3XITdhX?usp=sharing
+- **05 — Production Workflows**: https://colab.research.google.com/drive/1Vi86d3WPtG9p3V2RmxSHWt4wXxJ049Qe?usp=sharing
+- **06 — Performance Benchmarking**: https://colab.research.google.com/drive/18gDd3bRHE0v_MjJMeLnW3wMCALrcFKMa?usp=sharing
+
 ## 🔧 How to Add a New Metric
 
 `blazemetrics` is designed to be easily extensible. To add your own custom metric:

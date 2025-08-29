@@ -24,16 +24,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Test build with maturin
+      - name: Install extension into current Python with maturin develop
         uses: PyO3/maturin-action@v1
         with:
-          manylinux: auto
-          command: build
+          command: develop
+          args: --release
 
-      - name: Test installation
+      - name: Verify import
         run: |
-          # Find and install the wheel
-          find target -name "*.whl" -exec pip install {} \;
           python -c "import blazemetrics; print('Import successful')"
 
       - name: Run basic tests
