@@ -30,15 +30,29 @@ pip install blazemetrics
 
 Prebuilt wheels are published for Linux (manylinux2014), macOS, and Windows across Python 3.8–3.12 via CI. On supported platforms, `pip` will download a wheel and skip any Rust compilation. If you still see a build step, it likely means a wheel for your exact Python/OS/arch wasn’t available yet.
 
-### Building from source only for (developers/contributors)
+If you want to enforce wheel-only installs to avoid any local build attempts:
 
-If a wheel is not available for your platform, or if you install from source (e.g., `git clone` or `pip install -e .`), the Rust toolchain is required to build the native extension:
+```bash
+pip install --only-binary :all: blazemetrics
+```
+
+> Tip: If `pip` falls back to building from source, it will be noticeably slower. Prefer wheels when possible.
+
+### Developers/contributors (from source)
+
+If you are developing or installing from a fresh clone, you will need the Rust toolchain to build the native extension. Use the dev requirements to get build tooling:
 
 ```bash
 # Install Rust (one time)
 curl --proto '=https' --tlsv1.2 -sSf https://rustup.rs | sh
 
 # From a cloned repo
+pip install -r requirements-dev.txt
+```
+
+Alternatively, editable install directly (also requires Rust):
+
+```bash
 pip install -e .
 ```
 
