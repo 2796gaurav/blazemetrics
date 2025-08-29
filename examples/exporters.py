@@ -38,6 +38,7 @@ class MetricsExporters:
                 except Exception:
                     pass
         # StatsD
+        
         if self.statsd_client is not None:
             for k, v in metrics.items():
                 try:
