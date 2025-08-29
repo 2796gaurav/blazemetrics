@@ -28,7 +28,6 @@ dependencies = [
 Homepage = "https://github.com/2796gaurav/blazemetrics"
 Repository = "https://github.com/2796gaurav/blazemetrics"
 Issues = "https://github.com/2796gaurav/blazemetrics/issues"
-Contact = "mailto:2796gaurav@gmail.com"
 
 [build-system]
 requires = ["maturin>=1.0,<2.0"]
