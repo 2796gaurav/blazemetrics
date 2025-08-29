@@ -2,7 +2,6 @@ import time
 import numpy as np
 from blazemetrics import bert_score_similarity
 
-
 def random_embeddings(num_tokens, dim, seed):
     rng = np.random.default_rng(seed)
     return rng.random((num_tokens, dim), dtype=np.float32)
