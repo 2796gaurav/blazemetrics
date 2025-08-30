@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="logo.png" alt="BlazeMetrics Logo" width="200"/>
+  <img src="examples/images/logo.png" alt="BlazeMetrics Logo" width="200"/>
   <h1>BlazeMetrics 🔥</h1>
 </div>
 
