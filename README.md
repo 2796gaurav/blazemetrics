@@ -202,36 +202,77 @@ pip install -r requirements-dev.txt
 pip install -e .
 ```
 
-## 🔧 Examples
+## 🔄 Streaming Examples
 
-### **Basic Metrics**
-```bash
-python examples/basic_usage.py
+### **OpenAI Streaming with Guardrails**
+```python
+import os
+from typing import Iterator
+from blazemetrics import Guardrails, enforce_stream_sync
+from openai import OpenAI
+
+# Setup OpenAI client
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+
+# Configure guardrails
+rails = Guardrails(
+    blocklist=["bomb", "terror"],
+    regexes=[r"\b\d{3}-\d{2}-\d{4}\b"],
+    case_insensitive=True,
+    redact_pii=True,
+    safety=True,
+)
+
+def token_iter() -> Iterator[str]:
+    stream = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": "Write a story with a phone number"}],
+        stream=True,
+        temperature=0.0,
+    )
+    for chunk in stream:
+        delta = chunk.choices[0].delta.content or ""
+        if delta:
+            yield delta
+
+# Monitor and enforce guardrails in real-time
+for out in enforce_stream_sync(token_iter(), rails, every_n_tokens=25, replacement="[BLOCKED]", safety_threshold=0.6):
+    print(out, end="", flush=True)
 ```
 
-### **Guardrails**
-```bash
-python examples/guardrails.py
-```
+### **Claude Streaming with Guardrails**
+```python
+import os
+from typing import Iterator
+from blazemetrics import Guardrails, enforce_stream_sync
+import anthropic
 
-### **Streaming with OpenAI**
-```bash
-python examples/openai_stream_guardrails.py
-```
+# Setup Claude client
+client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
-### **Streaming with Claude**
-```bash
-python examples/claude_stream_guardrails.py
-```
+# Configure guardrails
+rails = Guardrails(
+    blocklist=["bomb", "terror"],
+    regexes=[r"\b\d{3}-\d{2}-\d{4}\b"],
+    case_insensitive=True,
+    redact_pii=True,
+    safety=True,
+)
 
-### **Batch Workflow**
-```bash
-python examples/batch_workflow.py
-```
+def token_iter() -> Iterator[str]:
+    with client.messages.stream(
+        model="claude-3-haiku-20240307",
+        messages=[{"role": "user", "content": "Write a story with a phone number"}],
+        max_tokens=256,
+        temperature=0.0,
+    ) as stream:
+        for event in stream:
+            if event.type == "content_block_delta" and event.delta.get("text"):
+                yield event.delta["text"]
 
-### **Live Monitoring**
-```bash
-python examples/live_monitoring.py
+# Monitor and enforce guardrails in real-time
+for out in enforce_stream_sync(token_iter(), rails, every_n_tokens=25, replacement="[BLOCKED]", safety_threshold=0.6):
+    print(out, end="", flush=True)
 ```
 
 ## 🤝 Contributing
@@ -269,6 +310,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <div align="center">
-  <p>Made with ❤️ by the BlazeMetrics team</p>
+  <p>Made with ❤️ by Gaurav Chauhan</p>
   <p><em>Accelerating NLP evaluation with Rust-powered performance</em></p>
 </div>
