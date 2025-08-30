@@ -1,6 +1,7 @@
 <div align="center">
   <img src="examples/images/logo.png" alt="BlazeMetrics Logo" width="200"/>
   <h1>BlazeMetrics 🔥</h1>
+  <p><strong>Ultra-fast NLP evaluation metrics powered by Rust</strong></p>
 </div>
 
 [![PyPI version](https://badge.fury.io/py/blazemetrics.svg)](https://pypi.org/project/blazemetrics/)
@@ -16,233 +17,258 @@
   <p><em>BlazeMetrics is up to <strong>32.8x faster</strong> than popular Python implementations</em></p>
 </div>
 
-**BlazeMetrics** is a Python library designed to be the fastest implementation of standard NLP evaluation metrics, powered by a highly optimized Rust core. It leverages Rust's performance, memory safety, and true parallelism to offer significant speedups over pure Python implementations, especially on large datasets.
+## 🚀 Quick Start
 
-## ✨ Key Features
+**BlazeMetrics** is the fastest implementation of NLP evaluation metrics, powered by a highly optimized Rust core. Get up to **32.8x speedup** over pure Python implementations.
 
--   **Blazing Fast**: Core logic is written in Rust, compiled to native code, and parallelized with [Rayon](https://github.com/rayon-rs/rayon) to use all available CPU cores.
--   **NumPy Integration**: Efficiently handles numerical data like embeddings via NumPy, with matrix operations accelerated by Rust's `ndarray`.
--   **No GIL**: CPU-bound tasks run on the Rust backend without being constrained by Python's Global Interpreter Lock (GIL).
--   **Simple API**: A clean, intuitive API that feels familiar to Python developers.
--   **Extensible**: Designed with a clear path for adding new, high-performance metrics.
--   **New: LLM Guardrails**: Ultra-fast guardrails (blocklists, regex policies, PII redaction, lightweight safety scoring) implemented in Rust for streaming and batch workflows.
--   **New: LLM Guardrails++**: JSON Schema validation & auto-repair, prompt-injection/jailbreak heuristics, Unicode spoof detection, and ANN-like unsafe similarity — all blazing fast.
-
-## 🚀 Installation
-
-### End users (pip install)
-
-Most users can just install from PyPI and do not need Rust:
-
+### Installation
 ```bash
 pip install blazemetrics
 ```
 
-Prebuilt wheels are published for Linux (manylinux2014), macOS, and Windows across Python 3.8–3.12 via CI. On supported platforms, `pip` will download a wheel and skip any Rust compilation. If you still see a build step, it likely means a wheel for your exact Python/OS/arch wasn’t available yet.
+### Your First Metrics
+```python
+from blazemetrics import rouge_score, bleu, chrf_score
 
-If you want to enforce wheel-only installs to avoid any local build attempts:
+# Sample data
+candidates = ["the cat sat on the mat", "the dog ate the homework"]
+references = [["the cat was on the mat"], ["the dog did my homework"]]
 
+# ROUGE scores
+rouge_1 = rouge_score(candidates, references, score_type="rouge_n", n=1)
+rouge_2 = rouge_score(candidates, references, score_type="rouge_n", n=2)
+rouge_l = rouge_score(candidates, references, score_type="rouge_l")
+
+# BLEU score
+bleu_scores = bleu(candidates, references)
+
+# chrF score
+chrf_scores = chrf_score(candidates, references, max_n=6, beta=2.0)
+
+print(f"ROUGE-1: {rouge_1}")
+print(f"BLEU: {bleu_scores}")
+print(f"chrF: {chrf_scores}")
+```
+
+### Your First Guardrails
+```python
+from blazemetrics import Guardrails
+
+# Create guardrails for content moderation
+gr = Guardrails(
+    blocklist=["bomb", "terror", "hate"],
+    redact_pii=True,  # Auto-redact emails, phones, SSNs
+    safety=True,      # Lightweight safety scoring
+    case_insensitive=True
+)
+
+texts = [
+    "My email is alice@example.com and SSN is 123-45-6789",
+    "I will bomb the building",
+    "Hello, how are you today?"
+]
+
+results = gr.check(texts)
+print(results)
+```
+
+## 📚 Interactive Tutorials
+
+Jump right into our comprehensive tutorials:
+
+- **[01 - Installation & Setup](https://colab.research.google.com/drive/1No3vlPCIuZuAJfpK09xbaDyuveJ2LKfs?usp=sharing)** - Get started in minutes
+- **[02 - Core Metrics Showcase](https://colab.research.google.com/drive/1gABpSf0rWjFSjJdMyYqXgbHOGhA4FyFI?usp=sharing)** - ROUGE, BLEU, chrF, METEOR, WER
+- **[03 - Guardrails Showcase](https://colab.research.google.com/drive/19ZpqxQl7yvvxSd7FsnB603IbwOdx5NoT?usp=sharing)** - Content moderation & safety
+- **[04 - Streaming Monitoring](https://colab.research.google.com/drive/17Mzd2p1oUfw0hjIHGw-E6jL5V3XITdhX?usp=sharing)** - Real-time monitoring
+- **[05 - Production Workflows](https://colab.research.google.com/drive/1Vi86d3WPtG9p3V2RmxSHWt4wXxJ049Qe?usp=sharing)** - Batch processing & deployment
+
+## ✨ Key Features
+
+### 🚀 **Blazing Performance**
+- **Rust Core**: Native performance without Python GIL limitations
+- **Parallel Processing**: Automatic multi-core acceleration with Rayon
+- **NumPy Integration**: Efficient handling of embeddings and numerical data
+- **32.8x Faster**: Up to 32.8x speedup over pure Python implementations
+
+### 📊 **Comprehensive Metrics**
+- **ROUGE**: ROUGE-1, ROUGE-2, ROUGE-L for text summarization
+- **BLEU**: Bilingual Evaluation Understudy for machine translation
+- **chrF**: Character n-gram F-score for multilingual evaluation
+- **METEOR**: Metric for Evaluation of Translation with Explicit ORdering
+- **WER**: Word Error Rate for speech recognition
+- **Token-level**: F1, Jaccard similarity for fine-grained analysis
+- **BERTScore**: Semantic similarity using contextual embeddings
+- **MoverScore**: Word mover distance for semantic evaluation
+
+### 🛡️ **LLM Guardrails**
+- **Blocklist Matching**: Fast keyword filtering via Aho-Corasick algorithm
+- **Regex Policies**: Precompiled DFA for efficient pattern matching
+- **PII Redaction**: Automatic detection and redaction of sensitive data
+- **Safety Scoring**: Lightweight heuristic-based safety assessment
+- **JSON Schema Validation**: Schema compliance with auto-repair
+- **Injection Detection**: Prompt injection and jailbreak attempt detection
+- **Unicode Spoofing**: Detection of malicious Unicode manipulation
+- **Streaming Enforcement**: Real-time content moderation
+
+### 🔄 **Production Ready**
+- **Batch Processing**: Optimized for large-scale evaluation
+- **Streaming Support**: Token-level monitoring for live applications
+- **Monitoring**: Rolling windows, alerts, and metrics aggregation
+- **Exporters**: CSV, JSON, and custom metric export formats
+
+## 🎯 Use Cases
+
+### **Research & Development**
+```python
+# Fast evaluation for model development
+from blazemetrics import compute_text_metrics
+
+metrics = compute_text_metrics(
+    candidates=model_outputs,
+    references=ground_truth,
+    metrics=["rouge_n", "bleu", "chrf"],
+    n_values=[1, 2],  # ROUGE-1, ROUGE-2
+    max_n=4,          # BLEU n-grams
+    beta=2.0          # chrF beta
+)
+```
+
+### **Content Moderation**
+```python
+# Real-time content filtering
+from blazemetrics import monitor_tokens_sync
+
+def token_stream():
+    # Your token generator
+    yield "Hello"
+    yield " world"
+    yield "!"
+
+# Monitor tokens as they stream
+for alert in monitor_tokens_sync(token_stream(), guardrails, every_n_tokens=10):
+    if alert:
+        print(f"Content flagged: {alert}")
+```
+
+### **Production Monitoring**
+```python
+# Live monitoring with rolling windows
+from blazemetrics import monitor_stream_sync
+
+# Monitor a stream of model outputs
+for metrics in monitor_stream_sync(
+    model_outputs, 
+    window_size=100,
+    metrics=["rouge_1", "bleu", "wer"]
+):
+    if metrics["rouge_1"] < 0.3:
+        print("Quality alert: ROUGE-1 below threshold")
+```
+
+## ⚙️ Performance Tuning
+
+Control parallelism for your use case:
+
+```python
+from blazemetrics import set_parallel, set_parallel_threshold
+
+# For small batches (streaming)
+set_parallel_threshold(1000)  # Only parallelize batches >= 1000
+
+# For large batch processing
+set_parallel(True)  # Enable full parallelism
+```
+
+## 📦 Installation Options
+
+### **End Users** (Recommended)
+```bash
+pip install blazemetrics
+```
+Prebuilt wheels available for Linux, macOS, and Windows (Python 3.8-3.12).
+
+### **Wheel-Only Install** (Avoid compilation)
 ```bash
 pip install --only-binary :all: blazemetrics
 ```
 
-> Tip: If `pip` falls back to building from source, it will be noticeably slower. Prefer wheels when possible.
-
-### Developers/contributors (from source)
-
-If you are developing or installing from a fresh clone, you will need the Rust toolchain to build the native extension. Use the dev requirements to get build tooling:
-
+### **Developers** (From source)
 ```bash
-# Install Rust (one time)
+# Install Rust toolchain
 curl --proto '=https' --tlsv1.2 -sSf https://rustup.rs | sh
 
-# From a cloned repo
+# Install from source
 pip install -r requirements-dev.txt
-```
-
-Alternatively, editable install directly (also requires Rust):
-
-```bash
 pip install -e .
 ```
 
-### Maintainers: building wheels
+## 🔧 Examples
 
-We use GitHub Actions to build wheels for Linux, macOS, and Windows and publish them on tagged releases. To build locally or for custom targets:
-
+### **Basic Metrics**
 ```bash
-# Build wheels (example for Linux manylinux2014)
-maturin build --release --compatibility manylinux2014 -o dist
-
-# Upload
-maturin upload dist/*
+python examples/basic_usage.py
 ```
 
-## ⚡ Quickstart
-
-The API is straightforward. Provide a list of candidate strings and a list of reference lists.
-
-```python
-import numpy as np
-from blazemetrics import rouge_score, bleu, bert_score_similarity, chrf_score, token_f1, jaccard, meteor, wer
-
-candidates = ["the cat sat on the mat", "the dog ate the homework"]
-references = [
-    ["the cat was on the mat"],
-    ["the dog did my homework"]
-]
-
-# ROUGE
-rouge_2_scores = rouge_score(candidates, references, score_type="rouge_n", n=2)
-rouge_l_scores = rouge_score(candidates, references, score_type="rouge_l")
-
-# BLEU
-bleu_scores = bleu(candidates, references)
-
-# chrF
-chrf_scores = chrf_score(candidates, references, max_n=6, beta=2.0)
-
-# Token-level metrics
-print(token_f1(candidates, references))
-print(jaccard(candidates, references))
-
-# METEOR-lite and WER
-print(meteor(candidates, references))
-print(wer(candidates, references))
-
-# BERTScore similarity kernel (requires embeddings)
-cand_embeddings = np.random.rand(5, 768).astype(np.float32)
-ref_embeddings = np.random.rand(8, 768).astype(np.float32)
-print(bert_score_similarity(cand_embeddings, ref_embeddings))
-```
-
-## 🛡️ LLM Guardrails (New)
-
-High-performance guardrails accelerated by Rust and parallelized with Rayon. Ideal for streaming moderation, batch post-processing, and preflight checks.
-
-- Blocklist matching via Aho–Corasick (case-insensitive option)
-- Regex policy checks (precompiled DFA)
-- PII redaction (email, phone, card, SSN)
-- Lightweight safety score heuristic (hate/sexual/violence/self-harm cues)
-- JSON Schema validation with best-effort auto-repair
-- Prompt-injection / jailbreak heuristics and Unicode spoofing detection
-- ANN-like unsafe similarity: fast cosine max vs exemplar bank
-
-```python
-from blazemetrics import Guardrails, guardrails_check
-
-texts = [
-    "My email is alice@example.com and my SSN is 123-45-6789.",
-    "I will bomb the building.",
-]
-
-gr = Guardrails(
-    blocklist=["bomb", "terror"],
-    regexes=[r"\b\d{3}-\d{2}-\d{4}\b"],
-    case_insensitive=True,
-    redact_pii=True,
-    safety=True,
-    json_schema='{"type":"object","properties":{"name":{"type":"string"}},"required":["name"]}'
-)
-print(gr.check(texts))
-```
-
-### Streaming guardrails and enforcement
-
-- Sync token monitoring: `monitor_tokens_sync(tokens_iter, rails, every_n_tokens=25)`
-- Async token monitoring: `monitor_tokens_async(async_tokens, rails, every_n_tokens=25)`
-- Multiprocessing batch mapper: `map_large_texts(texts, rails, processes=..., chunk_size=...)`
-- Enforcement wrapper: `enforce_stream_sync(tokens_iter, rails, replacement="[BLOCKED]", safety_threshold=0.6)`
-
-Examples:
-- `examples/openai_stream_guardrails.py` (OpenAI Chat Completions streaming)
-- `examples/claude_stream_guardrails.py` (Anthropic Claude streaming)
-
-## ⚙️ Parallelism Controls (Rayon overhead vs throughput)
-
-The Rust core uses Rayon to parallelize CPU-heavy work. Parallelism isn’t always faster on very small batches due to scheduling overhead. You can control this globally:
-
-- Environment variables (affects all functions):
-  - `BLAZEMETRICS_PARALLEL`: `1` to enable (default), `0` to disable
-- `BLAZEMETRICS_PAR_THRESHOLD`: minimum batch size to parallelize (default `512`)
-
-- Python API:
-
-```python
-from blazemetrics import set_parallel, get_parallel, set_parallel_threshold, get_parallel_threshold
-
-set_parallel(True)                 # enable or disable
-set_parallel_threshold(512)        # switch to sequential below threshold
-print(get_parallel(), get_parallel_threshold())
-```
-
-- Benchmark CLI (for experiments):
-
+### **Guardrails**
 ```bash
-python examples/benchmark.py --n 5000 --repeat 3 --warmup 1 --parallel 1 --par-threshold 512
-python examples/benchmark.py --n 200  --repeat 3 --warmup 1 --parallel 0
+python examples/guardrails.py
 ```
 
-Guidance:
-- Set a higher threshold or disable parallelism for small inputs (e.g., streaming with tiny micro-batches).
-- Leave parallelism on for large datasets to maximize throughput.
+### **Streaming with OpenAI**
+```bash
+python examples/openai_stream_guardrails.py
+```
 
-## 👷 Batch Workflow Example
+### **Streaming with Claude**
+```bash
+python examples/claude_stream_guardrails.py
+```
 
-See `examples/batch_workflow.py` for integrating metrics into training/evaluation loops. It demonstrates:
-- Computing batch metrics efficiently in Rust
-- Aggregating per-epoch metrics
-- Writing results to `training_metrics.csv`
-
-Run:
+### **Batch Workflow**
 ```bash
 python examples/batch_workflow.py
 ```
 
-## 📈 Live Monitoring Example (Production-like)
-
-See `examples/live_monitoring.py` for a simulated streaming setup with a rolling window and alerts.
-- Maintains a 100-sample window
-- Computes a fast subset of metrics (`BLEU`, `ROUGE-1`, `chrF`, `WER`)
-- Emits alerts on threshold breaches (latency-friendly)
-
-Run:
+### **Live Monitoring**
 ```bash
 python examples/live_monitoring.py
 ```
 
-## 📊 Benchmarking
+## 🤝 Contributing
 
-See `examples/benchmark.py` for a fair, reproducible benchmark comparing `blazemetrics` with popular Python implementations (when installed):
-- ROUGE (`rouge-score`), BLEU (`nltk`), chrF (`sacrebleu`), METEOR (`nltk`), WER (`jiwer`), BERTScore (`bert-score`), and MoverScore (`moverscore_v2`)
-- Cleanly skips baselines if dependencies or resources are missing
-- Saves a single combined overview chart at `examples/images/benchmark_overview.png`
+We welcome contributions! See our [Contributing Guide](CONTRIBUTING.md) for details.
 
-Parallelism flags available in the benchmark:
+### **Adding New Metrics**
+1. Implement logic in Rust under `src/`
+2. Use Rayon for parallel batch processing
+3. Expose as `#[pyfunction]` in `src/lib.rs`
+4. Rebuild: `pip install -e .`
 
+### **Development Setup**
 ```bash
-python examples/benchmark.py --parallel {0,1} --par-threshold 512
+# Install Rust toolchain
+curl --proto '=https' --tlsv1.2 -sSf https://rustup.rs | sh
+
+# Clone and setup
+git clone https://github.com/2796gaurav/blazemetrics.git
+cd blazemetrics
+pip install -r requirements-dev.txt
+pip install -e .
 ```
 
-## 📓 Showcase Notebooks (Open in Colab)
+## 📄 License
 
-Open the end-to-end showcase notebooks directly in Colab:
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-- **01 — Installation and Setup**: [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1No3vlPCIuZuAJfpK09xbaDyuveJ2LKfs?usp=sharing)
-- **02 — Core Metrics Showcase**: [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1gABpSf0rWjFSjJdMyYqXgbHOGhA4FyFI?usp=sharing)
-- **03 — Guardrails Showcase**: [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/19ZpqxQl7yvvxSd7FsnB603IbwOdx5NoT?usp=sharing)
-- **04 — Streaming Monitoring**: [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/17Mzd2p1oUfw0hjIHGw-E6jL5V3XITdhX?usp=sharing)
-- **05 — Production Workflows**: [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Vi86d3WPtG9p3V2RmxSHWt4wXxJ049Qe?usp=sharing)
-- **06 — Performance Benchmarking**: [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18gDd3bRHE0v_MjJMeLnW3wMCALrcFKMa?usp=sharing)
+## 🔗 Links
 
-## 🔧 How to Add a New Metric
+- **Documentation**: [GitHub Wiki](https://github.com/2796gaurav/blazemetrics/wiki)
+- **Issues**: [GitHub Issues](https://github.com/2796gaurav/blazemetrics/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/2796gaurav/blazemetrics/discussions)
 
-`blazemetrics` is designed to be easily extensible. To add your own custom metric:
+---
 
-1.  Implement the logic in Rust under `src/`, using Rayon for parallel batch processing.
-2.  Expose a `#[pyfunction]` in `src/lib.rs`, releasing the GIL for CPU-bound work.
-3.  Rebuild: `pip install -e .` or `maturin develop`.
-
-## ⚖️ License
-
-This project is licensed under the MIT License.
+<div align="center">
+  <p>Made with ❤️ by the BlazeMetrics team</p>
+  <p><em>Accelerating NLP evaluation with Rust-powered performance</em></p>
+</div>
