@@ -1,10 +1,20 @@
-# BlazeMetrics 🔥
+<div align="center">
+  <img src="logo.png" alt="BlazeMetrics Logo" width="200"/>
+  <h1>BlazeMetrics 🔥</h1>
+</div>
 
 [![PyPI version](https://badge.fury.io/py/blazemetrics.svg)](https://pypi.org/project/blazemetrics/)
 [![Python versions](https://img.shields.io/pypi/pyversions/blazemetrics.svg)](https://pypi.org/project/blazemetrics/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Wheels](https://img.shields.io/badge/wheels-available-brightgreen.svg)](https://pypi.org/project/blazemetrics/#files)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1No3vlPCIuZuAJfpK09xbaDyuveJ2LKfs?usp=sharing)
+
+## 🚀 Performance Benchmark
+
+<div align="center">
+  <img src="examples/images/benchmark.png" alt="BlazeMetrics Performance Benchmark" width="800"/>
+  <p><em>BlazeMetrics is up to <strong>32.8x faster</strong> than popular Python implementations</em></p>
+</div>
 
 **BlazeMetrics** is a Python library designed to be the fastest implementation of standard NLP evaluation metrics, powered by a highly optimized Rust core. It leverages Rust's performance, memory safety, and true parallelism to offer significant speedups over pure Python implementations, especially on large datasets.
 
