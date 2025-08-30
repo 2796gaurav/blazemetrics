@@ -19,7 +19,7 @@
 
 ## 🚀 Quick Start
 
-**BlazeMetrics** is the fastest implementation of NLP evaluation metrics, powered by a highly optimized Rust core. Get up to **32.8x speedup** over pure Python implementations.
+**BlazeMetrics** is the fastest implementation of NLP evaluation metrics, powered by a highly optimized Rust core.
 
 ### Installation
 ```bash
@@ -117,6 +117,109 @@ Jump right into our comprehensive tutorials:
 - **Exporters**: CSV, JSON, and custom metric export formats
 
 ## 🎯 Use Cases
+
+### **1. 🚀 Real-Time Streaming Content Moderation for LLMs**
+
+**What's Unique:** No existing Python package offers real-time token-level content moderation for streaming LLM responses.
+
+```python
+from blazemetrics import Guardrails, enforce_stream_sync
+
+# Real-time streaming moderation - UNIQUE IN PYTHON ECOSYSTEM
+for output in enforce_stream_sync(
+    openai_stream_tokens(),  # Token stream from OpenAI
+    guardrails,
+    every_n_tokens=25,
+    replacement="[BLOCKED]"
+):
+    print(output, end="", flush=True)  # Real-time output
+```
+
+**Why This Matters:** Immediate blocking of harmful content as it's generated, no latency, production-ready for live LLM applications.
+
+### **2. 🛡️ Unified Performance + Safety Platform**
+
+**What's Unique:** First package to combine ultra-fast NLP evaluation with production-ready content safety in one library.
+
+```python
+from blazemetrics import compute_text_metrics, Guardrails
+
+# Performance evaluation
+metrics = compute_text_metrics(candidates, references)  # 32.8x faster
+
+# Safety checking
+safety = Guardrails(
+    blocklist=["harmful", "content"],
+    redact_pii=True,
+    safety=True
+).check(texts)
+
+# Both in one library
+```
+
+**Why This Matters:** Single dependency for both evaluation and safety, consistent performance, simplified production deployment.
+
+### **3. 🔥 Rust-Powered Performance Without Complexity**
+
+**What's Unique:** 32.8x speedup over pure Python implementations while maintaining simple Python API.
+
+```python
+# Simple Python API, Rust performance underneath
+from blazemetrics import compute_text_metrics
+
+# 10,000 samples in seconds, not minutes
+metrics = compute_text_metrics(
+    candidates=large_dataset,  # 10K+ texts
+    references=ground_truth,
+    metrics=["rouge_n", "bleu", "chrf", "meteor"]
+)
+```
+
+**Why This Matters:** Drop-in replacement for existing slow libraries, no code changes required, massive performance gains without complexity.
+
+### **4. 📊 Live Production Monitoring with Rolling Windows**
+
+**What's Unique:** Real-time monitoring with rolling windows, alerts, and metric exporters - no other package offers this.
+
+```python
+from blazemetrics import monitor_stream_sync
+
+# Live monitoring with rolling windows
+for metrics in monitor_stream_sync(
+    model_outputs,
+    window_size=100,
+    thresholds={"rouge_1": 0.3, "bleu": 0.15},
+    prometheus_gateway="localhost:9090"  # Production integration
+):
+    if metrics["rouge_1"] < 0.3:
+        alert_team("Quality alert!")  # Real-time alerts
+```
+
+**Why This Matters:** Proactive quality management in production, real-time alerts before users notice issues, production integration with monitoring systems.
+
+### **5. 🎯 Comprehensive LLM-Specific Guardrails**
+
+**What's Unique:** Specialized guardrails for LLM applications that no other package provides.
+
+```python
+from blazemetrics import Guardrails
+
+# LLM-specific guardrails
+rails = Guardrails(
+    blocklist=["harmful", "content"],
+    redact_pii=True,                    # Auto-redact emails, SSNs
+    json_schema='{"type": "object"}',   # Schema validation
+    detect_injection_spoof=True,        # Prompt injection detection
+    safety=True                         # LLM safety scoring
+)
+
+# Comprehensive LLM protection
+results = rails.check(llm_outputs)
+```
+
+**Why This Matters:** LLM-specific threats addressed, compliance ready (GDPR, CCPA), security focused for AI applications.
+
+## 🔄 Advanced Examples
 
 ### **Research & Development**
 ```python
