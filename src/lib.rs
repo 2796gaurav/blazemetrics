@@ -12,6 +12,23 @@ mod wer;
 mod meteor_metric;
 mod moverscore;
 mod guardrails;
+mod fuzzy;
+mod embeddings;
+
+mod agentic_rag;
+mod multimodal;
+mod agent_eval;
+mod production_monitor;
+mod safety;
+mod code_eval;
+
+use crate::agentic_rag::agentic_rag_evaluate;
+use crate::multimodal::{multimodal_evaluate, multimodal_evaluate_generation};
+use crate::agent_eval::agent_eval_evaluate;
+use crate::production_monitor::production_monitor_tick;
+use crate::safety::safety_comprehensive_evaluation;
+use crate::code_eval::code_eval_evaluate;
+
 
 // Wrapper for ROUGE scores
 #[pyfunction]
@@ -110,7 +127,7 @@ fn bert_score_similarity(
     let refs_norm = normalize_embeddings(refs_view);
 
     // Cosine similarity via matrix multiplication
-    let similarity_matrix = cands_norm.dot(&refs_norm.t());
+    let similarity_matrix = cands_norm.dot(&refs_view.t());
 
     // Get max similarity for each token
     let precision_scores: Vec<f32> = similarity_matrix
@@ -247,6 +264,132 @@ fn guard_max_cosine_similarity(
     Ok(guardrails::max_cosine_similarity(&c, &e))
 }
 
+// New fuzzy matching functions
+#[pyfunction]
+fn guard_fuzzy_blocklist(
+    py: Python,
+    texts: Vec<String>,
+    patterns: Vec<String>,
+    max_distance: Option<usize>,
+    algorithm: Option<&str>,
+    case_sensitive: Option<bool>,
+) -> PyResult<Vec<bool>> {
+    let max_dist = max_distance.unwrap_or(2);
+    let algo = match algorithm.unwrap_or("levenshtein") {
+        "levenshtein" => fuzzy::FuzzyAlgorithm::Levenshtein,
+        "damerau_levenshtein" => fuzzy::FuzzyAlgorithm::DamerauLevenshtein,
+        "jaro_winkler" => fuzzy::FuzzyAlgorithm::JaroWinkler,
+        _ => fuzzy::FuzzyAlgorithm::Levenshtein,
+    };
+    let case_sens = case_sensitive.unwrap_or(false);
+    
+    let config = fuzzy::FuzzyConfig {
+        max_distance: max_dist,
+        algorithm: algo,
+        case_sensitive: case_sens,
+        normalize_whitespace: true,
+    };
+    
+    let result = py.allow_threads(|| {
+        fuzzy::fuzzy_match_any_bool(&texts, &patterns, &config)
+    });
+    Ok(result)
+}
+
+#[pyfunction]
+fn guard_fuzzy_blocklist_detailed(
+    py: Python,
+    texts: Vec<String>,
+    patterns: Vec<String>,
+    max_distance: Option<usize>,
+    algorithm: Option<&str>,
+    case_sensitive: Option<bool>,
+) -> PyResult<Vec<Vec<(String, String, f64, f64, String)>>> {
+    let max_dist = max_distance.unwrap_or(2);
+    let algo = match algorithm.unwrap_or("levenshtein") {
+        "levenshtein" => fuzzy::FuzzyAlgorithm::Levenshtein,
+        "damerau_levenshtein" => fuzzy::FuzzyAlgorithm::DamerauLevenshtein,
+        "jaro_winkler" => fuzzy::FuzzyAlgorithm::JaroWinkler,
+        _ => fuzzy::FuzzyAlgorithm::Levenshtein,
+    };
+    let case_sens = case_sensitive.unwrap_or(false);
+    
+    let config = fuzzy::FuzzyConfig {
+        max_distance: max_dist,
+        algorithm: algo,
+        case_sensitive: case_sens,
+        normalize_whitespace: true,
+    };
+    
+    let result = py.allow_threads(|| {
+        let matches = fuzzy::fuzzy_match_any(&texts, &patterns, &config);
+        // Convert FuzzyMatch to tuple format that PyO3 can handle
+        matches.into_iter().map(|text_matches| {
+            text_matches.into_iter().map(|m| {
+                let algorithm_str = match m.algorithm {
+                    fuzzy::FuzzyAlgorithm::Levenshtein => "levenshtein",
+                    fuzzy::FuzzyAlgorithm::DamerauLevenshtein => "damerau_levenshtein",
+                    fuzzy::FuzzyAlgorithm::JaroWinkler => "jaro_winkler",
+                }.to_string();
+                (m.pattern, m.text, m.distance, m.similarity, algorithm_str)
+            }).collect()
+        }).collect()
+    });
+    Ok(result)
+}
+
+// New embedding operations
+#[pyfunction]
+fn batch_cosine_similarity_optimized(
+    _py: Python,
+    embeddings: PyReadonlyArray2<'_, f32>,
+    query: PyReadonlyArray2<'_, f32>,
+) -> PyResult<Vec<f32>> {
+    let emb_array = embeddings.as_array();
+    let query_array = query.as_array();
+    
+    let embeddings_vec: Vec<Vec<f32>> = emb_array.rows().into_iter().map(|r| r.to_vec()).collect();
+    let query_vec: Vec<f32> = query_array.row(0).to_vec();
+    
+    let result = embeddings::batch_cosine_similarity_simple(&embeddings_vec, &query_vec);
+    Ok(result)
+}
+
+#[pyfunction]
+fn semantic_search_topk(
+    _py: Python,
+    queries: PyReadonlyArray2<'_, f32>,
+    corpus: PyReadonlyArray2<'_, f32>,
+    top_k: usize,
+) -> PyResult<Vec<Vec<(usize, f32)>>> {
+    let queries_array = queries.as_array();
+    let corpus_array = corpus.as_array();
+    
+    let queries_vec: Vec<Vec<f32>> = queries_array.rows().into_iter().map(|r| r.to_vec()).collect();
+    let corpus_vec: Vec<Vec<f32>> = corpus_array.rows().into_iter().map(|r| r.to_vec()).collect();
+    
+    let result = embeddings::advanced_ops::semantic_search_topk(&queries_vec, &corpus_vec, top_k);
+    Ok(result)
+}
+
+#[pyfunction]
+fn rag_retrieval_with_reranking(
+    _py: Python,
+    query: PyReadonlyArray2<'_, f32>,
+    passages: PyReadonlyArray2<'_, f32>,
+    top_k: usize,
+    rerank_threshold: f32,
+) -> PyResult<Vec<(usize, f32, f32)>> {
+    let query_array = query.as_array();
+    let passages_array = passages.as_array();
+    
+    let query_vec: Vec<f32> = query_array.row(0).to_vec();
+    let passages_vec: Vec<Vec<f32>> = passages_array.rows().into_iter().map(|r| r.to_vec()).collect();
+    
+    let result = embeddings::rag_ops::rag_retrieval_with_reranking(&query_vec, &passages_vec, top_k, rerank_threshold);
+    Ok(result)
+}
+
 // Helper for normalizing embeddings
 fn normalize_embeddings(embeddings: ArrayView2<f32>) -> Array2<f32> {
     let mut normalized_embeddings = embeddings.to_owned();
@@ -262,7 +405,6 @@ fn normalize_embeddings(embeddings: ArrayView2<f32>) -> Array2<f32> {
     normalized_embeddings
 }
 
-
 #[pymodule]
 fn blazemetrics(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(rouge_score, m)?)?;
@@ -274,6 +416,7 @@ fn blazemetrics(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(moverscore_greedy_py, m)?)?;
     m.add_function(wrap_pyfunction!(meteor_score, m)?)?;
     m.add_function(wrap_pyfunction!(wer_score, m)?)?;
+    
     // Guardrails
     m.add_function(wrap_pyfunction!(guard_blocklist, m)?)?;
     m.add_function(wrap_pyfunction!(guard_regex, m)?)?;
@@ -282,5 +425,22 @@ fn blazemetrics(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(guard_json_validate, m)?)?;
     m.add_function(wrap_pyfunction!(guard_detect_injection_spoof, m)?)?;
     m.add_function(wrap_pyfunction!(guard_max_cosine_similarity, m)?)?;
+    
+    // New fuzzy matching functions
+    m.add_function(wrap_pyfunction!(guard_fuzzy_blocklist, m)?)?;
+    m.add_function(wrap_pyfunction!(guard_fuzzy_blocklist_detailed, m)?)?;
+    
+    // New embedding operations
+    m.add_function(wrap_pyfunction!(batch_cosine_similarity_optimized, m)?)?;
+    m.add_function(wrap_pyfunction!(semantic_search_topk, m)?)?;
+    m.add_function(wrap_pyfunction!(rag_retrieval_with_reranking, m)?)?;
+    
+    m.add_function(wrap_pyfunction!(agentic_rag_evaluate, m)?)?;
+    m.add_function(wrap_pyfunction!(multimodal_evaluate, m)?)?;
+    m.add_function(wrap_pyfunction!(multimodal_evaluate_generation, m)?)?;
+    m.add_function(wrap_pyfunction!(agent_eval_evaluate, m)?)?;
+    m.add_function(wrap_pyfunction!(production_monitor_tick, m)?)?;
+    m.add_function(wrap_pyfunction!(safety_comprehensive_evaluation, m)?)?;
+    m.add_function(wrap_pyfunction!(code_eval_evaluate, m)?)?;
     Ok(())
 }

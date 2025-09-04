@@ -1,6 +1,6 @@
 # Import Rust functions directly from the compiled extension
 try:
-    # Use relative import to avoid shadowing the package name
+    # Use the compiled extension via the blazemetrics module
     from . import blazemetrics as _ext
     (
         rouge_score,
@@ -27,12 +27,34 @@ try:
     moverscore_greedy = moverscore_greedy_py
     meteor = meteor_score
     wer = wer_score
+    
+    # New enhanced functions
+    (
+        guard_fuzzy_blocklist,
+        guard_fuzzy_blocklist_detailed,
+        batch_cosine_similarity_optimized,
+        semantic_search_topk,
+        rag_retrieval_with_reranking,
+    ) = (
+        _ext.guard_fuzzy_blocklist,
+        _ext.guard_fuzzy_blocklist_detailed,
+        _ext.batch_cosine_similarity_optimized,
+        _ext.semantic_search_topk,
+        _ext.rag_retrieval_with_reranking,
+    )
 except ImportError as e:
     # Fallback for development or when extension not built
     raise ImportError(
         "blazemetrics extension not found. "
         "Build the Rust extension via 'maturin develop' or install with 'pip install -e .'"
     ) from e
+
+from .agentic import AgenticRAGEvaluator
+from .multimodal import MultimodalEvaluator
+from .agent_eval import AgentEvaluator
+from .production_monitor import ProductionMonitor
+from .safety_evaluator import SafetyEvaluator
+from .code_evaluator import CodeEvaluator
 
 import os
 from typing import Optional
@@ -44,6 +66,9 @@ __lazy_modules__ = {
     "monitor": ".monitor",
     "guardrails": ".guardrails",
     "guardrails_pipeline": ".guardrails_pipeline",
+    "llm_integrations": ".llm_integrations",
+    "streaming_analytics": ".streaming_analytics",
+    "client": ".client",
 }
 
 __all__ = [
@@ -72,10 +97,43 @@ __all__ = [
     "set_parallel_threshold",
     "get_parallel_threshold",
     "max_similarity_to_unsafe",
+    # New enhanced features
+    "guard_fuzzy_blocklist",
+    "guard_fuzzy_blocklist_detailed",
+    "batch_cosine_similarity_optimized",
+    "semantic_search_topk",
+    "rag_retrieval_with_reranking",
+    # Core guardrails
+    "guard_blocklist",
+    "guard_regex",
+    "guard_pii_redact",
+    "guard_safety_score",
+    "guard_json_validate",
+    "guard_detect_injection_spoof",
+    "guard_max_cosine_similarity",
+    # New simple client API
+    "BlazeMetricsClient",
+    "ClientConfig",
+    "quick_safety_check",
+    "quick_fuzzy_check",
+    "quick_rag_search",
+    "AgenticRAGEvaluator",
+    "MultimodalEvaluator",
+    "AgentEvaluator",
+    "ProductionMonitor",
+    "SafetyEvaluator",
+    "CodeEvaluator",
 ]
 
 __doc__ = """
 BlazeMetrics: High-performance NLP evaluation metrics with a Rust core.
+
+Enhanced Features:
+- Fuzzy blocklist matching with edit distance algorithms
+- Advanced embedding operations for RAG and semantic search
+- LLM-specific guardrails and integrations
+- Real-time streaming analytics with anomaly detection
+- Enhanced PII detection with code/SQL injection patterns
 """
 
 # Expose package version for `blazemetrics.__version__`
@@ -159,4 +217,50 @@ def __getattr__(name: str):
             "enforce_stream_sync": enforce_stream_sync,
         })
         return globals()[name]
-    raise AttributeError(name) 
+    if name in ("guard_blocklist", "guard_regex", "guard_pii_redact", "guard_safety_score",
+                "guard_json_validate", "guard_detect_injection_spoof", "guard_max_cosine_similarity"):
+        # These functions are in the Rust extension, not in guardrails.py
+        try:
+            from . import blazemetrics as _ext
+            globals().update({
+                "guard_blocklist": _ext.guard_blocklist,
+                "guard_regex": _ext.guard_regex,
+                "guard_pii_redact": _ext.guard_pii_redact,
+                "guard_safety_score": _ext.guard_safety_score,
+                "guard_json_validate": _ext.guard_json_validate,
+                "guard_detect_injection_spoof": _ext.guard_detect_injection_spoof,
+                "guard_max_cosine_similarity": _ext.guard_max_cosine_similarity,
+            })
+            return globals()[name]
+        except ImportError:
+            # Fallback to guardrails.py if Rust extension not available
+            from .guardrails import (
+                _guard_blocklist as guard_blocklist,
+                _guard_regex as guard_regex,
+                _guard_pii_redact as guard_pii_redact,
+                _guard_safety_score as guard_safety_score,
+                _guard_json_validate as guard_json_validate,
+                _guard_detect_injection_spoof as guard_detect_injection_spoof,
+                _guard_max_cosine_similarity as guard_max_cosine_similarity,
+            )
+            globals().update({
+                "guard_blocklist": guard_blocklist,
+                "guard_regex": guard_regex,
+                "guard_pii_redact": guard_pii_redact,
+                "guard_safety_score": guard_safety_score,
+                "guard_json_validate": guard_json_validate,
+                "guard_detect_injection_spoof": guard_detect_injection_spoof,
+                "guard_max_cosine_similarity": guard_max_cosine_similarity,
+            })
+            return globals()[name]
+    if name in ("BlazeMetricsClient", "ClientConfig", "quick_safety_check", "quick_fuzzy_check", "quick_rag_search"):
+        from .client import BlazeMetricsClient, ClientConfig, quick_safety_check, quick_fuzzy_check, quick_rag_search
+        globals().update({
+            "BlazeMetricsClient": BlazeMetricsClient,
+            "ClientConfig": ClientConfig,
+            "quick_safety_check": quick_safety_check,
+            "quick_fuzzy_check": quick_fuzzy_check,
+            "quick_rag_search": quick_rag_search,
+        })
+        return globals()[name]
+    raise AttributeError(name)

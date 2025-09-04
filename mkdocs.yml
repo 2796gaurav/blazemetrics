@@ -1,0 +1,281 @@
+site_name: BlazeMetrics
+site_description: Ultra-fast NLP evaluation metrics powered by Rust
+site_author: Gaurav Chauhan
+site_url: https://2796gaurav.github.io/blazemetrics/
+
+repo_name: 2796gaurav/blazemetrics
+repo_url: https://github.com/2796gaurav/blazemetrics
+edit_uri: edit/main/docs/
+
+# Copyright
+copyright: Copyright &copy; 2024 Gaurav Chauhan
+
+theme:
+  name: material
+  language: en
+  custom_dir: docs/stylesheets
+  
+  # Color palette with custom colors
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+      scheme: default
+      primary: indigo
+      accent: indigo
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+      primary: indigo
+      accent: indigo
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+      primary: indigo
+      accent: indigo
+  
+  # Enhanced features
+  features:
+    # Content features
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - content.tabs.link
+    - content.tooltips
+    
+    # Header features
+    - header.autohide
+    - header.autohide.tabs
+    
+    # Navigation features
+    - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.delay
+    - navigation.instant.loading
+    - navigation.instant.preload
+    - navigation.instant.progress
+    - navigation.prune
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - navigation.tabs.integrate
+    - navigation.primary
+    - navigation.tracking
+    
+    # Search features
+    - search.highlight
+    - search.share
+    - search.suggest
+    
+    # Table of contents features
+    - toc.follow
+    - toc.integrate
+  
+  # Icons
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
+  
+  # Social links
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/2796gaurav/blazemetrics
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/gauravchauhan
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/in/gauravchauhan
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/blazemetrics
+  
+  # Analytics
+  analytics:
+    provider: google
+    property: !ENV GOOGLE_ANALYTICS_KEY
+  
+  # Versioning - handled by standalone mike tool
+  
+  # Additional theme options
+  font:
+    text: Roboto
+    code: Roboto Mono
+  
+  # Custom CSS and JS
+  extra_css:
+    - stylesheets/extra.css
+    - stylesheets/additional.css
+  
+  extra_javascript:
+    - javascripts/extra.js
+
+# Extra metadata
+extra:
+  # SEO and social media
+  generator: false
+  
+  # Repository information
+  repo_url: https://github.com/2796gaurav/blazemetrics
+  repo_name: 2796gaurav/blazemetrics
+  
+  # Author information
+  author:
+    name: Gaurav Chauhan
+    email: gaurav@blazemetrics.ai
+    url: https://gauravchauhan.com
+
+# Enhanced plugins
+plugins:
+  # Search with advanced features
+  - search:
+      separator: '[\s\-,:!=\[\]()"/`|]+'
+      lang: en
+  
+  # Minification
+  - minify:
+      minify_html: true
+      minify_css: true
+      minify_js: true
+  
+  # Git revision dates
+  - git-revision-date-localized:
+      enable_creation_date: true
+      enable_git_follow: false
+      type: date
+      locale: en
+      strict: false
+
+# Markdown extensions
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+      title: On this page
+      permalink_class: headerlink
+      permalink_title: Permalink to this heading
+  - pymdownx.arithmatex:
+      generic: true
+      preview: false
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+      extend_pygments_lang:
+        - name: mermaid
+          lang: mermaid
+          class: mermaid
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      normalize_issue_symbols: true
+      repo_url_shorthand: true
+      user: 2796gaurav
+      repo: blazemetrics
+      provider: github
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+        - name: chart
+          class: chart
+          format: !!python/name:pymdownx.superfences.fence_code_format
+        - name: diagram
+          class: diagram
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+      combine_header_slug: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# Navigation structure
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+  - Core Features:
+    - Core Metrics: user-guide/core-metrics.md
+    - Guardrails & Safety: user-guide/guardrails-safety.md
+    - Fuzzy Matching: user-guide/fuzzy-matching.md
+    - Embedding Operations: user-guide/embedding-operations.md
+    - Streaming Analytics: user-guide/streaming-analytics.md
+    - LLM Integrations: user-guide/llm-integrations.md
+    - Monitoring & Exporters: user-guide/monitoring-exporters.md
+  - API Reference:
+    - Core Functions: api/core-functions.md
+    - Guardrails API: api/guardrails-api.md
+    - Client APIs: api/client-apis.md
+    - Configuration: api/configuration.md
+    - Streaming API: api/streaming-api.md
+  - Advanced Usage:
+    - Performance Tuning: advanced/performance-tuning.md
+    - Custom Metrics: advanced/custom-metrics.md
+    - Batch Processing: advanced/batch-processing.md
+    - Parallel Processing: advanced/parallel-processing.md
+    - Production Deployment: advanced/production-deployment.md
+  - Examples:
+    - Basic Examples: examples/basic-examples.md
+    - Advanced Examples: examples/advanced-examples.md
+    - Production Workflows: examples/production-workflows.md
+    - Real-world Workflows: examples/real-world-workflows.md
+  - Use Cases:
+    - NLP Evaluation: use-cases/nlp-evaluation.md
+    - Content Moderation: use-cases/content-moderation.md
+    - RAG Applications: use-cases/rag-applications.md
+    - Production Monitoring: use-cases/production-monitoring.md
+  - Benchmarks:
+    - Performance Comparison: benchmarks/performance-comparison.md
+    - Competitor Analysis: benchmarks/competitor-analysis.md
+    - Scalability Analysis: benchmarks/scalability-analysis.md
+  - Development:
+    - Contributing: development/contributing.md
+    - Architecture: development/architecture.md
+    - Testing: development/testing.md
+    - Development Setup: development/development-setup.md
+    - Building from Source: development/building-from-source.md
+  - About:
+    - Changelog: about/changelog.md
+    - License: about/license.md
+  - Blog: blog/index.md
+  - Glossary: glossary.md
+  - Tags: tags.md
+
+# Validation
+validation:
+  nav:
+    omitted_files: ignore
+  not_found: ignore

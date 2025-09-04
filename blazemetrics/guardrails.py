@@ -2,18 +2,61 @@ from typing import List, Dict, Any, Optional, Tuple
 
 
 def _guard_blocklist(texts: List[str], patterns: List[str], case_insensitive: bool) -> List[bool]:
-    from . import blazemetrics as _ext
-    return _ext.guard_blocklist(texts, patterns, case_insensitive)
+    try:
+        from . import blazemetrics as _ext
+        return _ext.guard_blocklist(texts, patterns, case_insensitive)
+    except ImportError:
+        # Fallback implementation (optimized)
+        if case_insensitive:
+            lowered_patterns = [p.lower() for p in patterns]
+            results = []
+            for text in texts:
+                text_lower = text.lower()
+                blocked = any(p in text_lower for p in lowered_patterns)
+                results.append(blocked)
+            return results
+        else:
+            results = []
+            for text in texts:
+                blocked = any(p in text for p in patterns)
+                results.append(blocked)
+            return results
 
 
 def _guard_regex(texts: List[str], patterns: List[str], case_insensitive: bool) -> List[bool]:
-    from . import blazemetrics as _ext
-    return _ext.guard_regex(texts, patterns, case_insensitive)
+    try:
+        from . import blazemetrics as _ext
+        return _ext.guard_regex(texts, patterns, case_insensitive)
+    except ImportError:
+        # Fallback implementation
+        import re
+        flags = re.IGNORECASE if case_insensitive else 0
+        compiled_patterns = [re.compile(pattern, flags) for pattern in patterns]
+        results = []
+        for text in texts:
+            flagged = any(pattern.search(text) for pattern in compiled_patterns)
+            results.append(flagged)
+        return results
 
 
 def _guard_pii_redact(texts: List[str]) -> List[str]:
-    from . import blazemetrics as _ext
-    return _ext.guard_pii_redact(texts)
+    try:
+        from . import blazemetrics as _ext
+        return _ext.guard_pii_redact(texts)
+    except ImportError:
+        # Fallback implementation - simple redaction
+        import re
+        email_pattern = re.compile(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}')
+        phone_pattern = re.compile(r'\b\d{3}-\d{3}-\d{4}\b')
+        ssn_pattern = re.compile(r'\b\d{3}-\d{2}-\d{4}\b')
+        
+        results = []
+        for text in texts:
+            redacted = email_pattern.sub('[EMAIL]', text)
+            redacted = phone_pattern.sub('[PHONE]', redacted)
+            redacted = ssn_pattern.sub('[SSN]', redacted)
+            results.append(redacted)
+        return results
 
 
 def _guard_safety_score(texts: List[str]) -> List[float]:
