@@ -7,10 +7,7 @@ drift detection, and cost optimization with real-time alerts.
 
 import json
 
-try:
-    import blazemetrics.blazemetrics_abi3 as _ext
-except ImportError:
-    import blazemetrics.blazemetrics as _ext
+import blazemetrics.blazemetrics_core as _ext
 
 
 class ProductionMonitor:

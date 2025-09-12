@@ -1,6 +1,6 @@
 [package]
 name = "blazemetrics_core"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 description = "Rust core for blazemetrics: high-performance NLP metrics and guardrails"
 license = "MIT"
@@ -9,7 +9,7 @@ homepage = "https://github.com/2796gaur/blazemetrics"
 documentation = "https://github.com/2796gaur/blazemetrics#readme"
 
 [lib]
-name = "blazemetrics"
+name = "blazemetrics_core"
 crate-type = ["cdylib"]
 
 [dependencies]

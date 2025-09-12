@@ -305,45 +305,5 @@ class AsyncStreamingAnalytics(StreamingAnalytics):
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(None, self.get_metric_summary)
 
-def create_llm_monitoring_analytics(
-    window_size: int = 100,
-    provider: str = "generic"
-) -> StreamingAnalytics:
-    """Create pre-configured analytics for LLM monitoring"""
-    
-    # Provider-specific alert rules
-    if provider == "openai":
-        alert_rules = [
-            AlertRule("rouge_1", 0.3, "lt", "warning", 3),
-            AlertRule("bleu", 0.15, "lt", "warning", 3),
-            AlertRule("safety_score", 0.7, "gt", "error", 1),
-            AlertRule("response_time", 5.0, "gt", "warning", 2),
-        ]
-    elif provider == "claude":
-        alert_rules = [
-            AlertRule("rouge_1", 0.25, "lt", "warning", 3),
-            AlertRule("bleu", 0.12, "lt", "warning", 3),
-            AlertRule("safety_score", 0.6, "gt", "error", 1),
-            AlertRule("response_time", 3.0, "gt", "warning", 2),
-        ]
-    elif provider == "huggingface":
-        alert_rules = [
-            AlertRule("rouge_1", 0.2, "lt", "warning", 3),
-            AlertRule("bleu", 0.1, "lt", "warning", 3),
-            AlertRule("safety_score", 0.5, "gt", "error", 1),
-            AlertRule("response_time", 10.0, "gt", "warning", 2),
-        ]
-    else:
-        # Generic rules
-        alert_rules = [
-            AlertRule("rouge_1", 0.3, "lt", "warning", 3),
-            AlertRule("bleu", 0.15, "lt", "warning", 3),
-            AlertRule("safety_score", 0.7, "gt", "error", 1),
-        ]
-    
-    return StreamingAnalytics(
-        window_size=window_size,
-        alert_rules=alert_rules,
-        anomaly_detection=True,
-        trend_analysis=True
-    ) 
+# The following function is now deprecated for provider-neutrality:
+# Users should instantiate StreamingAnalytics and supply their own alert rules; no defaults or provider-coupling remain in core code.

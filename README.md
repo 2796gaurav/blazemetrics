@@ -1,0 +1,198 @@
+#  BlazeMetrics
+
+[![PyPI](https://img.shields.io/pypi/v/blazemetrics?color=blue&style=flat-square)](https://pypi.org/project/blazemetrics/)
+[![Build Status](https://img.shields.io/github/workflow/status/2796gaurav/blazemetrics/main?style=flat-square)](https://github.com/2796gaurav/blazemetrics/actions)
+[![License](https://img.shields.io/github/license/2796gaurav/blazemetrics?style=flat-square)](LICENSE)
+
+**Supercharge your LLM and NLP evaluation, safety, and analytics with Rust-powered blazing speed.**  
+_Production-grade, plug-and-play, and battle-tested for enterprise and research LLM workflows._
+
+---
+
+## Why BlazeMetrics? 
+
+- **All-in-one evaluation:** BLEU, ROUGE, WER, METEOR, and more—plus advanced analytics and real guardrail safety.
+- **Lightning fast:** Core metrics run in Rust—perfect for millions of samples, parallel/async or streaming.
+- **Guardrails built-in:** Blocklists, PII, regex, JSON schema, safety, and LLM-based factuality scoring.
+- **Enterprise-ready:** Analytics, anomaly detection, dashboards, monitoring (Prometheus/StatsD), and instant reporting.
+- **Out-of-the-box for LLMs, RAG & agent workflows.**
+
+> _Deploy trust faster—for LLM startups, enterprise AI, researchers, and data science._
+
+---
+
+##  Features At a Glance
+
+-  **State-of-the-art metrics** (BLEU, ROUGE, WER, METEOR, CHRF, BERTScore & more)
+- ️ **Guardrails**: Block unsafe content, redact PII, enforce custom policies with regex/JSON
+-  **Streaming analytics**: Outlier detection, trending, alerts for real-time eval
+-  **LLM & RAG integration**: Plug and play with OpenAI, Anthropic, LangChain, HuggingFace, code/agent ground truth, RAG
+-  **Factuality/Judge**: Hallucination & faithfulness scoring using LLM judges
+-  **Production-scale speed**: Rust core, easy parallelism and batch
+-  **Dashboards & reporting**: Instant model/data card, web dashboards (optional)
+-  **Easy to extend**: Custom guardrails, exporters, analytics for your workflow
+
+---
+
+##  Installation
+
+**Stable (CPU, core features):**
+```shell
+pip install blazemetrics
+```
+
+**with Dashboards/Monitoring/etc:**
+```shell
+pip install "blazemetrics[dashboard]"
+```
+
+**From source (for developers):**
+```shell
+git clone https://github.com/2796gaurav/blazemetrics.git
+cd blazemetrics
+pip install -r requirements.txt
+maturin develop
+```
+
+---
+
+##  Quickstart: Get Bleeding-Edge Metrics in Seconds
+
+Evaluate all key metrics in just 3 lines—no config required!
+
+```python
+from blazemetrics import BlazeMetricsClient
+
+candidates = ["The quick brown fox.", "Hello world!"]
+references = [["The fast brown fox."], ["Hello world."]]
+
+client = BlazeMetricsClient()
+metrics = client.compute_metrics(candidates, references)
+print(metrics)  # {'rouge1_f1': [...], 'bleu': [...], ...}
+
+print(client.aggregate_metrics(metrics))  # {'rouge1_f1': 0.85, ...}
+```
+
+---
+
+##  Full LLM Workflow: Metrics, Guardrails, Analytics & Factuality — All in One
+
+```python
+from blazemetrics import BlazeMetricsClient
+from blazemetrics.llm_judge import LLMJudge  # LLM-based scoring for factuality
+
+# Your LLM generations and references
+candidates = ["Alice's email is alice@example.com.", "2 + 2 is 5."]
+references = [["Her email is alice@example.com."], ["2 + 2 = 4"]]
+
+client = BlazeMetricsClient(
+    blocklist=["bitcoin"],
+    redact_pii=True,
+    regexes=[r"\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b"],
+    enable_analytics=True,
+    metrics_lowercase=True,
+)
+
+# 1. Metrics
+metrics = client.compute_metrics(candidates, references)
+agg = client.aggregate_metrics(metrics)
+
+# 2. Guardrail safety checks
+violations = client.check_safety(candidates)
+
+# 3. Analytics/trends
+client.add_metrics(agg)
+analytics = client.get_analytics_summary()
+
+# 4. LLM-based factuality/hallucination (uses OpenAI, API key required)
+judge = LLMJudge(provider="openai", api_key="YOUR_OPENAI_KEY", model="gpt-4o")
+def factuality_scorer(output, reference):
+    result = judge.score([output], [reference])
+    return {"factuality": result[0].get("faithfulness", 0.0)}
+client.set_factuality_scorer(factuality_scorer)
+facts = client.evaluate_factuality(candidates, [r[0] for r in references])
+
+# 5. Fancy model card report
+model_card = client.generate_model_card("my-llm", metrics, analytics, config=vars(client.config), violations=violations, factuality=facts)
+print(model_card)
+```
+
+---
+
+##  Easy Integration: LLM, RAG, Agents, Guardrails, and More
+
+- Use as a drop-in evaluation for HuggingFace, OpenAI, Anthropic, LangChain, code generation, and agentic workflows
+- Proven RAG and semantic search/trace support: `semantic_search`, `agentic_rag_evaluate`, provenance tracking
+- Real-time dashboards: `blazemetrics-dashboard` (if installed with [dashboard])
+- Built-in exporters for Prometheus, StatsD, CSV, and HTML reports
+
+---
+
+##  Advanced: Async, Parallel, Streaming, and Dashboard
+
+- **Parallel/async evaluation:**  
+  `client.compute_metrics_parallel(...)` and `client.compute_metrics_async(...)`
+- **Streaming analytics & alerting:**  
+  Add metrics sample-by-sample and get anomalies/trends in real time.
+- **Instant dashboards:**  
+  After `pip install "blazemetrics[dashboard]"`, run:
+  ```sh
+  blazemetrics-dashboard
+  ```
+  Or, embed the dashboard server in your app/WSGI pipeline.
+- **RAG/agent evaluation:**  
+  ```python
+  client.agentic_rag_evaluate(...)
+  ```
+
+---
+
+##  API Overview (Unified Client)
+
+`BlazeMetricsClient` config (selected):
+
+- Metrics: `metrics_include`, `metrics_lowercase`, `metrics_stemming`
+- Guardrails: `blocklist`, `regexes`, `redact_pii`, `case_insensitive`
+- Analytics: `enable_analytics`, `analytics_window`, `analytics_alerts`, `analytics_anomalies`
+- Monitoring/Exporters: `enable_monitoring`, `prometheus_gateway`, `statsd_addr`
+- LLM config: `llm_provider`, `model_name`
+- Performance: `parallel_processing`, `max_workers`
+
+See [full docs](docs/) or `help(blazemetrics.BlazeMetricsClient)` for every option!
+
+---
+
+##  Dashboards & Reporting
+
+- **Web dashboards:** Instantly launch a web app for monitoring and reporting
+- **Instant model/data cards:** Beautiful shareable markdown summaries for your models and datasets
+- **Export:** Write HTML, CSV, Prometheus format, or push to cloud
+
+---
+
+##  Learn More
+
+- [Documentation](docs/)
+- [Examples](examples/)
+- [Advanced Usage: Analytics, Streaming, and Exporters](docs/user-guide/)
+- [RAG/Agent Evaluations](docs/use-cases/rag-applications.md)
+- [Production & Compliance](docs/user-guide/guardrails.md)
+
+---
+
+##  Contribute & Community
+
+- Star us on [GitHub](https://github.com/2796gaurav/blazemetrics)
+- Open issues/feature requests, or create a PR!
+- Join the discussion and help evolve LLM benchmarking and safety together.
+
+---
+
+##  License
+
+MIT
+
+---
+
+BlazeMetrics  2025 [Gaurav](mailto:2796gaurav@gmail.com)
+

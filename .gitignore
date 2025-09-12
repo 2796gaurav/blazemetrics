@@ -15,7 +15,17 @@ build/
 .pytest_cache/
 .coverage
 htmlcov/
+BLAZEMETRICS_API_REFERENCE.md
+BLAZEMETRICS_COURSEWORK.md
 
+model_download.sh
+
+site/
+site/*
+docs/
+docs/*
+
+mkdocs.yml
 .pypirc
 
 # Rust

@@ -7,10 +7,7 @@ Provides the AgenticRAGEvaluator class for evaluating agentic RAG pipelines.
 import json
 
 # Import the compiled Rust extension
-try:
-    import blazemetrics.blazemetrics_abi3 as _ext
-except ImportError:
-    import blazemetrics.blazemetrics as _ext
+import blazemetrics.blazemetrics_core as _ext
 
 class AgenticRAGEvaluator:
     """

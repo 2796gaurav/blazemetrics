@@ -14,6 +14,7 @@ mod moverscore;
 mod guardrails;
 mod fuzzy;
 mod embeddings;
+mod ann_hnsw;
 
 mod agentic_rag;
 mod multimodal;
@@ -406,7 +407,7 @@ fn normalize_embeddings(embeddings: ArrayView2<f32>) -> Array2<f32> {
 }
 
 #[pymodule]
-fn blazemetrics(_py: Python, m: &PyModule) -> PyResult<()> {
+fn blazemetrics_core(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(rouge_score, m)?)?;
     m.add_function(wrap_pyfunction!(bleu_score_py, m)?)?;
     m.add_function(wrap_pyfunction!(chrf_score, m)?)?;
@@ -434,6 +435,13 @@ fn blazemetrics(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(batch_cosine_similarity_optimized, m)?)?;
     m.add_function(wrap_pyfunction!(semantic_search_topk, m)?)?;
     m.add_function(wrap_pyfunction!(rag_retrieval_with_reranking, m)?)?;
+
+    // ANN/HNSW functions
+    m.add_function(wrap_pyfunction!(ann_hnsw::ann_build_index, m)?)?;
+    m.add_function(wrap_pyfunction!(ann_hnsw::ann_query_topk, m)?)?;
+    m.add_function(wrap_pyfunction!(ann_hnsw::ann_add_docs, m)?)?;
+    m.add_function(wrap_pyfunction!(ann_hnsw::ann_save_index, m)?)?;
+    m.add_function(wrap_pyfunction!(ann_hnsw::ann_load_index, m)?)?;
     
     m.add_function(wrap_pyfunction!(agentic_rag_evaluate, m)?)?;
     m.add_function(wrap_pyfunction!(multimodal_evaluate, m)?)?;

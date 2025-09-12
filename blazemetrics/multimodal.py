@@ -8,10 +8,7 @@ hallucination detection, and modality-specific quality metrics.
 import json
 
 # Import the compiled Rust extension
-try:
-    import blazemetrics.blazemetrics_abi3 as _ext
-except ImportError:
-    import blazemetrics.blazemetrics as _ext
+import blazemetrics.blazemetrics_core as _ext
 
 
 class MultimodalEvaluator:

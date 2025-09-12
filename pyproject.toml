@@ -1,6 +1,6 @@
 [project]
 name = "blazemetrics"
-version = "0.1.4"
+version = "0.1.5"
 authors = [
   { name="Gaurav", email="2796gaurav@gmail.com" },
 ]
@@ -24,6 +24,18 @@ dependencies = [
     "numpy",
 ]
 
+# Optional dashboard dependencies only installed via pip install blazemetrics[dashboard]
+[project.optional-dependencies]
+dashboard = [
+    "dash>=2.0.0",
+    "fastapi>=0.101.0",
+    "uvicorn>=0.22.0",
+    "requests",
+    "starlette",
+    "prometheus_client",
+    "statsd",
+]
+
 [project.urls]
 Homepage = "https://github.com/2796gaurav/blazemetrics"
 Repository = "https://github.com/2796gaurav/blazemetrics"
@@ -33,9 +45,13 @@ Issues = "https://github.com/2796gaurav/blazemetrics/issues"
 requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
+[project.scripts]
+blazemetrics-dashboard = "blazemetrics:main_dashboard"
+
 [tool.maturin]
 features = ["pyo3/extension-module"]
 python-packages = ["blazemetrics"]
+module-name = "blazemetrics.blazemetrics_core"
 # Only include the Python package in wheels; sdist will include Cargo sources by default
 # Use PEP 517 include/exclude to keep wheels lean and sdists reasonable
 include = [

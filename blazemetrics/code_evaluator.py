@@ -7,10 +7,7 @@ efficiency, security, maintainability, and style compliance.
 
 import json
 
-try:
-    import blazemetrics.blazemetrics_abi3 as _ext
-except ImportError:
-    import blazemetrics.blazemetrics as _ext
+import blazemetrics.blazemetrics_core as _ext
 
 
 class CodeEvaluator:

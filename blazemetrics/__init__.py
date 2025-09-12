@@ -1,60 +1,42 @@
 # Import Rust functions directly from the compiled extension
 try:
-    # Use the compiled extension via the blazemetrics module
-    from . import blazemetrics as _ext
-    (
-        rouge_score,
-        bleu,
-        bert_score_similarity,
-        chrf_score,
-        token_f1,
-        jaccard,
-        moverscore_greedy_py,
-        meteor_score,
-        wer_score,
-    ) = (
-        _ext.rouge_score,
-        _ext.bleu,
-        _ext.bert_score_similarity,
-        _ext.chrf_score,
-        _ext.token_f1,
-        _ext.jaccard,
-        _ext.moverscore_greedy_py,
-        _ext.meteor,
-        _ext.wer,
-    )
-    # Provide public names expected by users
-    moverscore_greedy = moverscore_greedy_py
-    meteor = meteor_score
-    wer = wer_score
-    
-    # New enhanced functions
-    (
-        guard_fuzzy_blocklist,
-        guard_fuzzy_blocklist_detailed,
-        batch_cosine_similarity_optimized,
-        semantic_search_topk,
-        rag_retrieval_with_reranking,
-    ) = (
-        _ext.guard_fuzzy_blocklist,
-        _ext.guard_fuzzy_blocklist_detailed,
-        _ext.batch_cosine_similarity_optimized,
-        _ext.semantic_search_topk,
-        _ext.rag_retrieval_with_reranking,
-    )
+    # All Rust extension imports now only from blazemetrics.blazemetrics_core
+    import blazemetrics.blazemetrics_core as _ext
+    rouge_score = _ext.rouge_score
+    bleu = _ext.bleu
+    bert_score_similarity = _ext.bert_score_similarity
+    chrf_score = _ext.chrf_score
+    token_f1 = _ext.token_f1
+    jaccard = _ext.jaccard
+    moverscore_greedy = _ext.moverscore_greedy_py
+    meteor = _ext.meteor
+    wer = _ext.wer
+    guard_fuzzy_blocklist = _ext.guard_fuzzy_blocklist
+    guard_fuzzy_blocklist_detailed = _ext.guard_fuzzy_blocklist_detailed
+    batch_cosine_similarity_optimized = _ext.batch_cosine_similarity_optimized
+    semantic_search_topk = _ext.semantic_search_topk
+    rag_retrieval_with_reranking = _ext.rag_retrieval_with_reranking
+    # ANN functions
+    ann_build_index = _ext.ann_build_index
+    ann_query_topk = _ext.ann_query_topk
+    ann_add_docs = _ext.ann_add_docs
+    ann_save_index = _ext.ann_save_index
+    ann_load_index = _ext.ann_load_index
 except ImportError as e:
-    # Fallback for development or when extension not built
     raise ImportError(
-        "blazemetrics extension not found. "
-        "Build the Rust extension via 'maturin develop' or install with 'pip install -e .'"
+        "BlazeMetrics Rust extension is REQUIRED and Python fallback is NOT allowed. "
+        "Build the Rust extension via 'maturin develop' or install with 'pip install -e .'\n"
+        f"\nRust/PyO3 ImportError: {e}"
     ) from e
 
+from .client import BlazeMetricsClient, ClientConfig
 from .agentic import AgenticRAGEvaluator
 from .multimodal import MultimodalEvaluator
 from .agent_eval import AgentEvaluator
 from .production_monitor import ProductionMonitor
 from .safety_evaluator import SafetyEvaluator
 from .code_evaluator import CodeEvaluator
+from .llm_guardrails import RealTimeLLMGuardrail
 
 import os
 from typing import Optional
@@ -71,6 +53,7 @@ __lazy_modules__ = {
     "client": ".client",
 }
 
+# Remove quick_fuzzy_check from __all__ to avoid user import confusion (not implemented by design)
 __all__ = [
     "rouge_score",
     "bleu",
@@ -115,7 +98,6 @@ __all__ = [
     "BlazeMetricsClient",
     "ClientConfig",
     "quick_safety_check",
-    "quick_fuzzy_check",
     "quick_rag_search",
     "AgenticRAGEvaluator",
     "MultimodalEvaluator",
@@ -123,6 +105,8 @@ __all__ = [
     "ProductionMonitor",
     "SafetyEvaluator",
     "CodeEvaluator",
+    # Real-Time LLM Guardrails
+    "RealTimeLLMGuardrail",
 ]
 
 __doc__ = """
@@ -143,6 +127,14 @@ try:
 except Exception:
     # Fallback if package metadata is unavailable (e.g., editable installs without metadata)
     __version__ = os.environ.get("BLAZEMETRICS_VERSION", "0.0.0")
+
+# Optional: dashboard entrypoint for pip install blazemetrics[dashboard]
+def main_dashboard():
+    try:
+        from .dashboard.app import run_dashboard
+        run_dashboard()
+    except ImportError:
+        print("Dashboard dependencies not installed. Run: pip install 'blazemetrics[dashboard]'")
 
 # Parallelism controls (propagated to Rust via environment variables)
 _ENV_PAR = "BLAZEMETRICS_PARALLEL"
@@ -254,13 +246,16 @@ def __getattr__(name: str):
             })
             return globals()[name]
     if name in ("BlazeMetricsClient", "ClientConfig", "quick_safety_check", "quick_fuzzy_check", "quick_rag_search"):
-        from .client import BlazeMetricsClient, ClientConfig, quick_safety_check, quick_fuzzy_check, quick_rag_search
+        from .client import BlazeMetricsClient, ClientConfig, quick_safety_check, quick_rag_search
         globals().update({
             "BlazeMetricsClient": BlazeMetricsClient,
             "ClientConfig": ClientConfig,
             "quick_safety_check": quick_safety_check,
-            "quick_fuzzy_check": quick_fuzzy_check,
             "quick_rag_search": quick_rag_search,
         })
+        if name == "quick_fuzzy_check":
+            def quick_fuzzy_check(*args, **kwargs):
+                raise NotImplementedError("quick_fuzzy_check() is not implemented in this release. Use .fuzzy_blocklist instead.")
+            globals()["quick_fuzzy_check"] = quick_fuzzy_check
         return globals()[name]
     raise AttributeError(name)
