@@ -43,8 +43,15 @@ class EnhancedGuardrails:
                 is not None for pattern in self.regexes
             ]
             if self.redact_pii:
-                import re
-                out["redacted"] = re.sub(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}', '[EMAIL]', text)
+                try:
+                    from .guardrails import _guard_pii_redact
+                    # Use Rust implementation for better PII detection
+                    redacted_list = _guard_pii_redact([text])
+                    out["redacted"] = redacted_list[0]
+                except Exception:
+                    # Fallback to simple regex
+                    import re
+                    out["redacted"] = re.sub(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}', '[REDACTED_EMAIL]', text)
             else:
                 out["redacted"] = text
             out["safe"] = not (any(out["blocked"]) or any(out["regex_flagged"]))

@@ -20,7 +20,7 @@
   <a href="https://pypi.org/project/blazemetrics/"><img src="https://img.shields.io/pypi/v/blazemetrics?color=blue&style=flat-square"></a>
   <a href="https://pepy.tech/project/blazemetrics"><img src="https://img.shields.io/pypi/dm/blazemetrics?style=flat-square" alt="Downloads"></a>
   <a href="https://pypi.org/project/blazemetrics/"><img src="https://img.shields.io/pypi/pyversions/blazemetrics?style=flat-square" alt="Python Versions"></a>
-  <a href="https://2796gaurav.github.io/blazemetrics/docs"><img src="https://img.shields.io/badge/docs-online-blue?style=flat-square" alt="Documentation"></a>
+  <a href="https://blazemetrics.vercel.app/docs"><img src="https://img.shields.io/badge/docs-online-blue?style=flat-square" alt="Documentation"></a>
   <a href="https://github.com/2796gaurav/blazemetrics/commits/main"><img src="https://img.shields.io/github/last-commit/2796gaurav/blazemetrics?style=flat-square" alt="Last Commit"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/2796gaurav/blazemetrics?style=flat-square"></a>
   <a href="https://pypi.org/project/blazemetrics/"><img src="https://img.shields.io/pypi/wheel/blazemetrics?style=flat-square" alt="Platform/Wheel"></a>
@@ -31,12 +31,12 @@
 
 ## Quick Links
 
-- **Homepage**: [https://2796gaurav.github.io/blazemetrics/](https://2796gaurav.github.io/blazemetrics/)
-- **Documentation**: [https://2796gaurav.github.io/blazemetrics/docs](https://2796gaurav.github.io/blazemetrics/docs)
-- **Real World Use Cases**: [https://2796gaurav.github.io/blazemetrics/use-cases](https://2796gaurav.github.io/blazemetrics/use-cases)
-- **Benchmarks**: [https://2796gaurav.github.io/blazemetrics/benchmarks](https://2796gaurav.github.io/blazemetrics/benchmarks)
-- **LLM Usage Guide**: [https://2796gaurav.github.io/blazemetrics/llm-usage](https://2796gaurav.github.io/blazemetrics/llm-usage)
-- **Learning Paths**: [https://2796gaurav.github.io/blazemetrics/learning-paths](https://2796gaurav.github.io/blazemetrics/learning-paths)
+- **Homepage**: [https://blazemetrics.vercel.app/](https://blazemetrics.vercel.app/)
+- **Documentation**: [https://blazemetrics.vercel.app/docs](https://blazemetrics.vercel.app/docs)
+- **Real World Use Cases**: [https://blazemetrics.vercel.app/use-cases](https://blazemetrics.vercel.app/use-cases)
+- **Benchmarks**: [https://blazemetrics.vercel.app/benchmarks](https://blazemetrics.vercel.app/benchmarks)
+- **LLM Usage Guide**: [https://blazemetrics.vercel.app/llm-usage](https://blazemetrics.vercel.app/llm-usage)
+- **Learning Paths**: [https://blazemetrics.vercel.app/learning-paths](https://blazemetrics.vercel.app/learning-paths)
 
 ---
 
@@ -70,7 +70,7 @@ BlazeMetrics is designed to make evaluation, guardrails, monitoring, and analyti
 
 **Test Configuration**: 10,000 normalized candidate/reference text pairs, median of 3 runs with full normalization and psutil RAM/CPU monitoring.
 
-For detailed benchmarks and comparisons, visit our [benchmarks page](https://2796gaurav.github.io/blazemetrics/benchmarks).
+For detailed benchmarks and comparisons, visit our [benchmarks page](https://blazemetrics.vercel.app/benchmarks).
 
 ---
 
@@ -194,7 +194,7 @@ BlazeMetrics integrates seamlessly with popular ML and LLM frameworks:
 - **Real-time Monitoring**: Live dashboards via `blazemetrics-dashboard` (available with `[dashboard]` installation)
 - **Export Formats**: Built-in exporters for Prometheus, StatsD, CSV, and HTML reports
 
-For detailed integration examples, check our [real-world use cases](https://2796gaurav.github.io/blazemetrics/use-cases).
+For detailed integration examples, check our [real-world use cases](https://blazemetrics.vercel.app/use-cases).
 
 ---
 
@@ -267,17 +267,17 @@ The `BlazeMetricsClient` supports extensive configuration options:
 - `prometheus_gateway`: Prometheus pushgateway integration
 - `statsd_addr`: StatsD server address for metrics export
 
-For complete configuration details, visit our [documentation](https://2796gaurav.github.io/blazemetrics/docs).
+For complete configuration details, visit our [documentation](https://blazemetrics.vercel.app/docs).
 
 ---
 
 ## Resources and Learning
 
-- **Getting Started**: [Learning Paths](https://2796gaurav.github.io/blazemetrics/learning-paths)
-- **API Documentation**: [Complete API Reference](https://2796gaurav.github.io/blazemetrics/docs)
-- **LLM Integration**: [LLM Usage Guide](https://2796gaurav.github.io/blazemetrics/llm-usage)
-- **Production Deployment**: [Real World Use Cases](https://2796gaurav.github.io/blazemetrics/use-cases)
-- **Performance Analysis**: [Benchmarks and Comparisons](https://2796gaurav.github.io/blazemetrics/benchmarks)
+- **Getting Started**: [Learning Paths](https://blazemetrics.vercel.app/learning-paths)
+- **API Documentation**: [Complete API Reference](https://blazemetrics.vercel.app/docs)
+- **LLM Integration**: [LLM Usage Guide](https://blazemetrics.vercel.app/llm-usage)
+- **Production Deployment**: [Real World Use Cases](https://blazemetrics.vercel.app/use-cases)
+- **Performance Analysis**: [Benchmarks and Comparisons](https://blazemetrics.vercel.app/benchmarks)
 
 ---
 
