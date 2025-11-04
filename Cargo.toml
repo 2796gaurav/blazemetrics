@@ -1,6 +1,6 @@
 [package]
 name = "blazemetrics_core"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2021"
 description = "Rust core for blazemetrics: high-performance NLP metrics and guardrails"
 license = "MIT"

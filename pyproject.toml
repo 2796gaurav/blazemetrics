@@ -1,6 +1,6 @@
 [project]
 name = "blazemetrics"
-version = "0.1.5"
+version = "0.1.6"
 authors = [
   { name="Gaurav", email="2796gaurav@gmail.com" },
 ]
